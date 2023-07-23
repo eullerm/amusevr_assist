@@ -8,7 +8,7 @@ class Response {
 }
 
 class EspApi {
-  static const String _baseUrl = 'http://amuse-vr';
+  static const String _baseUrl = 'http://amusevr';
   static const String _ssid = 'ssid';
   static const String _password = 'password';
 
@@ -16,7 +16,7 @@ class EspApi {
     try {
       String message = '';
       final response = await http.post(
-        Uri.parse('$_baseUrl/'),
+        Uri.parse('$_baseUrl/wifi'),
         body: {
           _ssid: ssid,
           _password: password,

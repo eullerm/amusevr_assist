@@ -140,8 +140,9 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextButton(
+            OutlinedButton(
               onPressed: () {
                 setState(() {
                   step = 0;
@@ -149,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
               },
               child: const Text('Voltar'),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 onConnect();
               },
@@ -167,24 +168,27 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text('AmuseVR Assist'),
       ),
-      body: Builder(
-        builder: (BuildContext context) {
-          switch (step) {
-            case 0:
-              return listWifi();
-            case 1:
-              return confirmConnection();
-            case 2:
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            default:
-              setState(() {
-                step = 0;
-              });
-              return listWifi();
-          }
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Builder(
+          builder: (BuildContext context) {
+            switch (step) {
+              case 0:
+                return listWifi();
+              case 1:
+                return confirmConnection();
+              case 2:
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              default:
+                setState(() {
+                  step = 0;
+                });
+                return listWifi();
+            }
+          },
+        ),
       ),
     );
   }
