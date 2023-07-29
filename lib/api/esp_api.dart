@@ -11,8 +11,9 @@ class EspApi {
   static const String _baseUrl = 'http://amusevr';
   static const String _ssid = 'ssid';
   static const String _password = 'password';
+  static const String _connectionType = 'connectionType';
 
-  static Future<Response> connectToWifi(String ssid, String password) async {
+  static Future<Response> connectToWifi(String ssid, String password, int connectionType) async {
     try {
       String message = '';
       final response = await http.post(
@@ -20,6 +21,7 @@ class EspApi {
         body: {
           _ssid: ssid,
           _password: password,
+          _connectionType: connectionType,
         },
       );
       if (response.statusCode == 200) {

@@ -20,9 +20,13 @@ class _SettingsPageState extends State<SettingsPage> {
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';
   String password = '';
+  String wpa = '';
   TextEditingController _textControllerPassword = TextEditingController();
   bool isObscure = true;
   int step = 0;
+
+  RegExp regexWPA = RegExp(r'\bWPA\b', caseSensitive: false);
+  RegExp regexWPA2 = RegExp(r'\bWPA2\b', caseSensitive: false);
   @override
   void initState() {
     super.initState();
@@ -61,9 +65,10 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  void setWifiSSID(String newSSID) {
+  void setWifi(String newSSID, String newWPA) {
     setState(() {
       ssid = newSSID;
+      wpa = newWPA;
       step = 1;
     });
   }
@@ -73,7 +78,15 @@ class _SettingsPageState extends State<SettingsPage> {
       step = 2; // Vai para tela de loading
     });
 
-    final Response response = await EspApi.connectToWifi(ssid, _textControllerPassword.text);
+    late int typeWPA;
+
+    if (regexWPA2.hasMatch(wpa)) {
+      typeWPA = 2;
+    } else if (regexWPA.hasMatch(wpa)) {
+      typeWPA = 1;
+    }
+
+    final Response response = await EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA);
 
     if (response.statusCode == 200) {
       // Show a success snackbar
@@ -114,7 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
             itemCount: wifiList.length,
             itemBuilder: (context, index) {
               final network = wifiList[index];
-              return AccessPointTile(onConfirm: () => {setWifiSSID(network.ssid)}, accessPoint: network);
+              return AccessPointTile(onConfirm: () => {setWifi(network.ssid, network.capabilities)}, accessPoint: network);
             },
           );
   }
@@ -122,7 +135,13 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget confirmConnection() {
     return Column(
       children: [
-        Text(ssid),
+        Text(
+          ssid,
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+        ),
+        const SizedBox(height: 10),
         TextField(
           controller: _textControllerPassword,
           obscureText: isObscure,
