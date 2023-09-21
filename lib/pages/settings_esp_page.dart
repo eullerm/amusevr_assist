@@ -6,16 +6,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({
+class SettingsEspPage extends StatefulWidget {
+  const SettingsEspPage({
     super.key,
   });
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  State<SettingsEspPage> createState() => _SettingsEspPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsEspPageState extends State<SettingsEspPage> {
   List<WiFiAccessPoint> wifiList = <WiFiAccessPoint>[];
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';

@@ -1,8 +1,15 @@
 import 'package:amusevr_assist/pages/landing_page.dart';
+import 'package:amusevr_assist/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SharedPreferencesProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

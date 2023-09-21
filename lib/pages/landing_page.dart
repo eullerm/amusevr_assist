@@ -1,4 +1,4 @@
-import 'package:amusevr_assist/pages/settings_page.dart';
+import 'package:amusevr_assist/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomStep {
@@ -26,7 +26,7 @@ class _LandingPageState extends State<LandingPage> {
             height: 60,
           ),
           SizedBox(height: 20),
-          Text("Este é um aplicativo para configurar a rede do ESP"),
+          Text("Este é um aplicativo para configurar o AMUSEVR"),
         ],
       ),
     ),
@@ -40,7 +40,21 @@ class _LandingPageState extends State<LandingPage> {
             height: 60,
           ),
           SizedBox(height: 20),
-          Text("Não se esqueça de se conectar na rede do ESP para poder configura-lo"),
+          Text("Com ele você poderá configurar o ESP para se conectar a sua rede Wi-Fi"),
+        ],
+      ),
+    ),
+    CustomStep(
+      stepNumber: 2,
+      content: Column(
+        children: [
+          Image.asset(
+            'assets/images/settings.png',
+            width: 60,
+            height: 60,
+          ),
+          SizedBox(height: 20),
+          Text("O ESP é responsável por controlar os periféricos como luz e ventilador"),
         ],
       ),
     )
@@ -62,7 +76,7 @@ class _LandingPageState extends State<LandingPage> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SettingsPage()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     }
   }
