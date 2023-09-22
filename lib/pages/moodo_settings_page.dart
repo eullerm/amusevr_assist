@@ -2,7 +2,7 @@ import 'package:amusevr_assist/api/moodo_api.dart';
 import 'package:amusevr_assist/models/device.dart';
 import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/home_page.dart';
-import 'package:amusevr_assist/pages/settings_esp_page.dart';
+import 'package:amusevr_assist/pages/esp_settings_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/custom_drawer.dart';
 import 'package:flutter/material.dart';
