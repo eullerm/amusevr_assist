@@ -1,5 +1,6 @@
 import 'package:amusevr_assist/api/moodo_api.dart';
-import 'package:amusevr_assist/utils/shared_preferences.dart';
+import 'package:amusevr_assist/models/user.dart';
+import 'package:amusevr_assist/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
-  late SharedPreferencesProvider _prefsProvider;
+  late User user;
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -22,20 +23,20 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    _prefsProvider = Provider.of<SharedPreferencesProvider>(context, listen: false);
+    user = Provider.of<User>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    context.watch<SharedPreferencesProvider>();
+    context.watch<User>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Page'),
+        title: const Text('Login Page'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,33 +63,23 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 try {
-                  final response = await MoodoApi.login(_emailController.text, _passwordController.text);
-
-                  if (response.statusCode == 200) {
-                    _prefsProvider.storeToken(response.token!);
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(response.error!),
-                        backgroundColor: Colors.redAccent,
-                      ),
-                    );
-                  }
+                  MoodoApi.login(_emailController.text, _passwordController.text).then((response) {
+                    if (response.statusCode == 200) {
+                      user.setToken(response.token!);
+                      Navigator.pop(context);
+                    } else {
+                      showCustomSnackBar(context, response.error!, 'error');
+                    }
+                  });
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.toString()),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
+                  showCustomSnackBar(context, e.toString(), 'error');
                 }
               },
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
           ],
         ),

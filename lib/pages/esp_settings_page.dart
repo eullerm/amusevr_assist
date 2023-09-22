@@ -1,21 +1,27 @@
 import 'dart:async';
 
 import 'package:amusevr_assist/api/esp_api.dart';
+import 'package:amusevr_assist/models/user.dart';
+import 'package:amusevr_assist/pages/home_page.dart';
+import 'package:amusevr_assist/pages/moodo_settings_page.dart';
+import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/access_point_tile.dart';
+import 'package:amusevr_assist/widgets/custom_drawer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 
-class SettingsEspPage extends StatefulWidget {
-  const SettingsEspPage({
+class EspSettingsPage extends StatefulWidget {
+  const EspSettingsPage({
     super.key,
   });
 
   @override
-  State<SettingsEspPage> createState() => _SettingsEspPageState();
+  State<EspSettingsPage> createState() => _EspSettingsPageState();
 }
 
-class _SettingsEspPageState extends State<SettingsEspPage> {
+class _EspSettingsPageState extends State<EspSettingsPage> {
   List<WiFiAccessPoint> wifiList = <WiFiAccessPoint>[];
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';
@@ -24,12 +30,14 @@ class _SettingsEspPageState extends State<SettingsEspPage> {
   TextEditingController _textControllerPassword = TextEditingController();
   bool isObscure = true;
   int step = 0;
+  late User user;
 
   RegExp regexWPA = RegExp(r'\bWPA\b', caseSensitive: false);
   RegExp regexWPA2 = RegExp(r'\bWPA2\b', caseSensitive: false);
   @override
   void initState() {
     super.initState();
+    user = Provider.of<User>(context, listen: false);
     _startListeningToScannedResults();
   }
 
@@ -86,48 +94,47 @@ class _SettingsEspPageState extends State<SettingsEspPage> {
       typeWPA = 1;
     }
 
-    final Response response = await EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA);
-
-    if (response.statusCode == 200) {
-      // Show a success snackbar
-      kShowSnackBar(context, 'Conectado com sucesso!');
-      setState(() {
-        step = 0; // Volta para tela de escolher rede
-      });
-    } else {
-      // Show an error snackbar
-      kShowSnackBar(context, 'Falha ao se conectar! Tente novamente.');
-      setState(() {
-        step = 1; // Volta para tela de digitar senha
-      });
-    }
-  }
-
-  Widget _buildInfo(String label, dynamic value) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            "$label: ",
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Expanded(child: Text(value.toString()))
-        ],
-      ),
-    );
+    EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA).then((response) {
+      if (response.statusCode == 200) {
+        showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
+        setState(() {
+          step = 0; // Volta para tela de escolher rede
+        });
+      } else {
+        showCustomSnackBar(context, 'Falha ao se conectar! Tente novamente.', 'error');
+        setState(() {
+          step = 1; // Volta para tela de digitar senha
+        });
+      }
+    });
   }
 
   Widget listWifi() {
     return wifiList.isEmpty
-        ? const Text("Nenhuma rede encontrada")
+        ? Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              children: const [
+                Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
+                Text("Nenhuma rede encontada!", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  "Verifique se o aplicativo possui a permissão necessária e tente novamente.",
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          )
         : ListView.builder(
             itemCount: wifiList.length,
             itemBuilder: (context, index) {
               final network = wifiList[index];
-              return AccessPointTile(onConfirm: () => {setWifi(network.ssid, network.capabilities)}, accessPoint: network);
+              return AccessPointTile(
+                onConfirm: () => {setWifi(network.ssid, network.capabilities)},
+                accessPoint: network,
+              );
             },
           );
   }
@@ -183,40 +190,53 @@ class _SettingsEspPageState extends State<SettingsEspPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('AmuseVR Assist'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Builder(
-          builder: (BuildContext context) {
-            switch (step) {
-              case 0:
-                return listWifi();
-              case 1:
-                return confirmConnection();
-              case 2:
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              default:
-                setState(() {
-                  step = 0;
-                });
-                return listWifi();
-            }
-          },
-        ),
-      ),
-    );
-  }
-}
+    context.watch<User>();
 
-/// Show snackbar.
-void kShowSnackBar(BuildContext context, String message) {
-  if (kDebugMode) print(message);
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(message)));
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('AMUSEVR Assist'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Builder(
+            builder: (BuildContext context) {
+              switch (step) {
+                case 0:
+                  return listWifi();
+                case 1:
+                  return confirmConnection();
+                case 2:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                default:
+                  setState(() {
+                    step = 0;
+                  });
+                  return listWifi();
+              }
+            },
+          ),
+        ),
+        drawer: CustomDrawer(
+          isLogged: user.token != null,
+          actualPage: 'espSettingsPage',
+          homeFunction: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+          espPageFunction: () {
+            Navigator.pop(context);
+          },
+          logoutFunction: () {
+            logout(context);
+          },
+          moodoPageFunction: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
+            );
+          },
+        ));
+  }
 }

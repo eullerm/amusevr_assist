@@ -1,3 +1,4 @@
+import 'package:amusevr_assist/models/device.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -19,7 +20,7 @@ class Login {
 
 class MoodoApi {
   static const String _baseUrl = 'https://rest.moodo.co/api';
-  static const Map<String, String> headers = {
+  static Map<String, String> headers = {
     'accept': 'application/json',
     'Content-Type': 'application/json',
   };
@@ -60,6 +61,29 @@ class MoodoApi {
         return Response(statusCode: response.statusCode, accepted: false, error: 'error');
       }
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<List<Device>> fetchDevices(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/boxes'),
+        headers: {
+          ...headers,
+          'token': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        List devices = jsonData['boxes'];
+        print(devices);
+        return devices.map((device) => Device.fromMap(device)).toList();
+      } else {
+        return [];
+      }
+    } catch (error) {
       rethrow;
     }
   }

@@ -1,15 +1,17 @@
+import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/landing_page.dart';
-import 'package:amusevr_assist/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => SharedPreferencesProvider(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (_) => User(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

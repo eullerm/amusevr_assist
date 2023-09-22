@@ -1,14 +1,14 @@
+import 'package:amusevr_assist/widgets/custom_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:wifi_scan/wifi_scan.dart';
 
 class AccessPointTile extends StatelessWidget {
   final WiFiAccessPoint accessPoint;
-  final Function onConfirm;
+  final Function() onConfirm;
 
   const AccessPointTile({Key? key, required this.onConfirm, required this.accessPoint}) : super(key: key);
 
-  // build row that can display info, based on label: value pair.
   Widget _buildInfo(String label, dynamic value) {
     return Container(
       decoration: const BoxDecoration(
@@ -37,42 +37,23 @@ class AccessPointTile extends StatelessWidget {
       subtitle: Text(accessPoint.capabilities),
       onTap: () => showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text(title),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildInfo("BSSDI", accessPoint.bssid),
-              _buildInfo("Capability", accessPoint.capabilities),
-              _buildInfo("frequency", "${accessPoint.frequency}MHz"),
-              _buildInfo("level", accessPoint.level),
-              _buildInfo("standard", accessPoint.standard),
-              _buildInfo("centerFrequency0", "${accessPoint.centerFrequency0}MHz"),
-              _buildInfo("centerFrequency1", "${accessPoint.centerFrequency1}MHz"),
-              _buildInfo("channelWidth", accessPoint.channelWidth),
-              _buildInfo("isPasspoint", accessPoint.isPasspoint),
-              _buildInfo("operatorFriendlyName", accessPoint.operatorFriendlyName),
-              _buildInfo("venueName", accessPoint.venueName),
-              _buildInfo("is80211mcResponder", accessPoint.is80211mcResponder),
-            ],
-          ),
-          actions: [
-            ButtonBar(
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Fechar"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    onConfirm();
-                  },
-                  child: const Text("Conectar"),
-                ),
-              ],
-            ),
-          ],
+        builder: (context) => CustomDialog(
+          title: title,
+          items: {
+            "BSSDI": accessPoint.bssid,
+            "Capability": accessPoint.capabilities,
+            "frequency": "${accessPoint.frequency}MHz",
+            "level": accessPoint.level,
+            "standard": accessPoint.standard,
+            "centerFrequency0": "${accessPoint.centerFrequency0}MHz",
+            "centerFrequency1": "${accessPoint.centerFrequency1}MHz",
+            "channelWidth": accessPoint.channelWidth,
+            "isPasspoint": accessPoint.isPasspoint,
+            "operatorFriendlyName": accessPoint.operatorFriendlyName,
+            "venueName": accessPoint.venueName,
+            "is80211mcResponder": accessPoint.is80211mcResponder
+          },
+          onConfirm: onConfirm,
         ),
       ),
     );

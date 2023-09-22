@@ -1,83 +1,87 @@
+import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/login_page.dart';
+import 'package:amusevr_assist/pages/moodo_settings_page.dart';
 import 'package:amusevr_assist/pages/settings_esp_page.dart';
-import 'package:amusevr_assist/utils/shared_preferences.dart';
+import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String userToken = "";
-  late SharedPreferencesProvider _prefsProvider;
+  late User user;
   @override
   void initState() {
-    _prefsProvider = Provider.of<SharedPreferencesProvider>(context, listen: false);
+    user = Provider.of<User>(context, listen: false);
     super.initState();
-  }
-
-  getUserToken() async {
-    userToken = await _prefsProvider.getToken() ?? "";
-    setState(() async {});
-    print('userToken: $userToken');
   }
 
   @override
   Widget build(BuildContext context) {
-    context.watch<SharedPreferencesProvider>();
-    getUserToken();
-
+    context.watch<User>();
     return Scaffold(
       appBar: AppBar(
-        title: Text("AMUSEVR Assist"),
+        title: const Text("AMUSEVR Assist"),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              },
-              child: Text("Logar com a conta Moodo"),
+            Visibility(
+              visible: user.token == null,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+                child: const Text("Logar com a conta Moodo"),
+              ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingsEspPage()),
+                  MaterialPageRoute(builder: (context) => const EspSettingsPage()),
                 );
               },
-              child: Text("Configurar o ESP"),
+              child: const Text("Selecionar WiFi"),
             ),
           ],
         ),
       ),
       drawer: CustomDrawer(
-        isLogged: userToken.isNotEmpty,
+        isLogged: user.token != null,
+        actualPage: 'homePage',
         homeFunction: () {
           Navigator.pop(context);
         },
-        logoutFunction: logout,
+        espPageFunction: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const EspSettingsPage()),
+          );
+        },
+        logoutFunction: () {
+          logout(context);
+        },
+        moodoPageFunction: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
+          );
+        },
       ),
-    );
-  }
-
-  logout() {
-    setState(() {
-      userToken = "";
-      _prefsProvider.removeToken();
-    });
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 }
