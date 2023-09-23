@@ -15,7 +15,7 @@ void showCustomSnackBar(BuildContext context, String message, String typeMessage
   Map<String, Color> colors = {
     'info': Colors.blueAccent,
     'error': Colors.redAccent,
-    'success': Colors.greenAccent,
+    'success': Colors.lightGreen,
     'warning': Colors.orangeAccent,
   };
   ScaffoldMessenger.of(context)

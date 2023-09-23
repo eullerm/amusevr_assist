@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/login_page.dart';
 import 'package:amusevr_assist/pages/moodo_settings_page.dart';
@@ -27,33 +29,41 @@ class _HomePageState extends State<HomePage> {
     context.watch<User>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AMUSEVR Assist"),
+        title: const Text("AmuseVR Assist"),
       ),
-      body: Center(
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+        alignment: Alignment.topCenter,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Visibility(
+          children: [
+            button(
+              text: "Logar com a conta Moodo",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
               visible: user.token == null,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
-                },
-                child: const Text("Logar com a conta Moodo"),
-              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
+            button(
+              text: "Selecionar WiFi",
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const EspSettingsPage()),
                 );
               },
-              child: const Text("Selecionar WiFi"),
+            ),
+            button(
+              text: "Moodo",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
+                );
+              },
+              visible: user.token != null,
             ),
           ],
         ),
@@ -81,6 +91,44 @@ class _HomePageState extends State<HomePage> {
             MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
           );
         },
+      ),
+    );
+  }
+
+  Widget button({required String text, required Function() onTap, bool visible = true}) {
+    return Visibility(
+      visible: visible,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        width: MediaQuery.of(context).size.width / 2 - 64,
+        height: MediaQuery.of(context).size.width / 2 - 64,
+        decoration: BoxDecoration(
+          color: Colors.lightBlueAccent.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16.0),
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateColor.resolveWith((states) => Colors.lightBlueAccent.withOpacity(0.4)),
+            ),
+            onPressed: () {
+              onTap();
+            },
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/home_page.dart';
 import 'package:amusevr_assist/pages/esp_settings_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
+import 'package:amusevr_assist/widgets/custom_dialog.dart';
 import 'package:amusevr_assist/widgets/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,15 +16,6 @@ class MoodoSettingsPage extends StatefulWidget {
 }
 
 class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
-  final List<String> colors = [
-    'Red',
-    'Green',
-    'Blue',
-    'Yellow',
-    'Orange',
-    'Purple',
-  ];
-
   List<Device> devices = [];
   late User user;
 
@@ -61,6 +53,35 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
           return ListTile(
             key: Key(device.id.toString()),
             leading: const Icon(Icons.device_hub),
+            trailing: user.deviceKey == device.deviceKey
+                ? IconButton(
+                    icon: Icon(
+                      Icons.check_circle,
+                    ),
+                    color: Colors.lightGreen,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CustomDialog(
+                            title: "Deseja desvincular o dispositivo ${device.name}?",
+                            items: {
+                              "Id": device.id,
+                              "Device Key": device.deviceKey,
+                              "Box Status": device.boxStatus,
+                              "Is Online": device.isOnline ? 'Sim' : 'Não',
+                              "Está carregando": device.isBatteryCharging ? 'Sim' : 'Não',
+                              "Bateria": "${device.batteryLevelPercent}%",
+                            },
+                            onConfirm: () {
+                              _handleItemUnselected(context, device.name);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  )
+                : null,
             title: Text(device.name),
             onTap: () {
               _handleItemClick(context, device);
@@ -95,25 +116,19 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(device.name),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('ID: ${device.id}'),
-              Text('Box Version: ${device.deviceKey}'),
-              // Add more details as needed
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-          ],
+        return CustomDialog(
+          title: device.name,
+          items: {
+            "Id": device.id,
+            "Device Key": device.deviceKey,
+            "Box Status": device.boxStatus,
+            "Is Online": device.isOnline ? 'Sim' : 'Não',
+            "Está carregando": device.isBatteryCharging ? 'Sim' : 'Não',
+            "Bateria": "${device.batteryLevelPercent}%",
+          },
+          onConfirm: () {
+            _handleItemSelected(context, device.deviceKey, device.name);
+          },
         );
       },
     );
@@ -122,5 +137,10 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
   void _handleItemSelected(BuildContext context, int deviceKey, String name) {
     showCustomSnackBar(context, 'Você selecionou o dispositivo $name', 'info');
     user.setDeviceKey(deviceKey);
+  }
+
+  void _handleItemUnselected(BuildContext context, String name) {
+    showCustomSnackBar(context, 'Você desvinculou o dispositivo $name', 'info');
+    user.removeDeviceKey();
   }
 }

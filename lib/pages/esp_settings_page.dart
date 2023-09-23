@@ -194,7 +194,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('AMUSEVR Assist'),
+          title: const Text('AmuseVR Assist'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),

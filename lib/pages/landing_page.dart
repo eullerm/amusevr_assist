@@ -26,7 +26,7 @@ class _LandingPageState extends State<LandingPage> {
             height: 60,
           ),
           SizedBox(height: 20),
-          Text("Este é um aplicativo para configurar o AMUSEVR"),
+          Text("Este é um aplicativo para configurar o AmuseVR"),
         ],
       ),
     ),

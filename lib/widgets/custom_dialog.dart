@@ -28,7 +28,7 @@ class CustomDialog extends StatelessWidget {
                 Navigator.pop(context);
                 onConfirm();
               },
-              child: const Text("Conectar"),
+              child: const Text("Confirmar"),
             ),
           ],
         ),

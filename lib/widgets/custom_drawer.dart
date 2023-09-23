@@ -87,12 +87,13 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
-  Widget button(
-      {required String text,
-      required IconData unselectedIcon,
-      required IconData selectedIcon,
-      required Function() function,
-      required bool isSelected}) {
+  Widget button({
+    required String text,
+    required IconData unselectedIcon,
+    required IconData selectedIcon,
+    required Function() function,
+    required bool isSelected,
+  }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: isSelected
