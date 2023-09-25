@@ -7,7 +7,7 @@ import 'package:amusevr_assist/pages/moodo_settings_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/access_point_tile.dart';
 import 'package:amusevr_assist/widgets/custom_drawer.dart';
-import 'package:flutter/foundation.dart';
+import 'package:amusevr_assist/widgets/password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wifi_scan/wifi_scan.dart';
@@ -48,7 +48,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
   }
 
   void _startListeningToScannedResults() async {
-    final can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
+    final can = await WiFiScan.instance.canGetScannedResults();
     switch (can) {
       case CanGetScannedResults.yes:
         subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
@@ -56,18 +56,22 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
         });
         break;
       case CanGetScannedResults.notSupported:
+        print("Not supported");
         // TODO: Handle this case.
         break;
       case CanGetScannedResults.noLocationPermissionRequired:
-        // TODO: Handle this case.
+        print("No located");
         break;
       case CanGetScannedResults.noLocationPermissionDenied:
+        print('Denied');
         // TODO: Handle this case.
         break;
       case CanGetScannedResults.noLocationPermissionUpgradeAccuracy:
+        print("Upgrade");
         // TODO: Handle this case.
         break;
       case CanGetScannedResults.noLocationServiceDisabled:
+        print("Disabled");
         // TODO: Handle this case.
         break;
     }
@@ -110,13 +114,18 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
   }
 
   Widget listWifi() {
+    ScrollController listViewController = ScrollController();
     return wifiList.isEmpty
         ? Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               children: const [
                 Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
-                Text("Nenhuma rede encontada!", textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(
+                  "Nenhuma rede encontada!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 SizedBox(
                   height: 8,
                 ),
@@ -127,15 +136,31 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
               ],
             ),
           )
-        : ListView.builder(
-            itemCount: wifiList.length,
-            itemBuilder: (context, index) {
-              final network = wifiList[index];
-              return AccessPointTile(
-                onConfirm: () => {setWifi(network.ssid, network.capabilities)},
-                accessPoint: network,
-              );
-            },
+        : SingleChildScrollView(
+            child: Column(
+              children: [
+                const Text(
+                  "Lembre-se de se conectar na rede WiFi do ESP antes de selecionar a rede que ele se conectará!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: wifiList.length,
+                  controller: listViewController,
+                  itemBuilder: (context, index) {
+                    final network = wifiList[index];
+                    return AccessPointTile(
+                      onConfirm: () => {setWifi(network.ssid, network.capabilities)},
+                      accessPoint: network,
+                    );
+                  },
+                ),
+              ],
+            ),
           );
   }
 
@@ -149,21 +174,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
           ),
         ),
         const SizedBox(height: 10),
-        TextField(
-          controller: _textControllerPassword,
-          obscureText: isObscure,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            labelText: 'Senha',
-            suffixIcon: IconButton(
-              icon: Icon(isObscure ? Icons.security : Icons.remove_red_eye),
-              onPressed: () {
-                setState(() {
-                  isObscure = !isObscure;
-                });
-              },
-            ),
-          ),
+        PasswordField(
+          passwordController: _textControllerPassword,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -193,50 +205,62 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
     context.watch<User>();
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('AmuseVR Assist'),
+      appBar: AppBar(
+        title: const Text('AmuseVR Assist'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Builder(
+          builder: (BuildContext context) {
+            switch (step) {
+              case 0:
+                return listWifi();
+              case 1:
+                return confirmConnection();
+              case 2:
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              default:
+                setState(() {
+                  step = 0;
+                });
+                return listWifi();
+            }
+          },
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Builder(
-            builder: (BuildContext context) {
-              switch (step) {
-                case 0:
-                  return listWifi();
-                case 1:
-                  return confirmConnection();
-                case 2:
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                default:
-                  setState(() {
-                    step = 0;
-                  });
-                  return listWifi();
-              }
-            },
-          ),
-        ),
-        drawer: CustomDrawer(
-          isLogged: user.token != null,
-          actualPage: 'espSettingsPage',
-          homeFunction: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          },
-          espPageFunction: () {
-            Navigator.pop(context);
-          },
-          logoutFunction: () {
-            logout(context);
-          },
-          moodoPageFunction: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
-            );
-          },
-        ));
+      ),
+      drawer: CustomDrawer(
+        isLogged: user.token != null,
+        actualPage: 'espSettingsPage',
+        homeFunction: () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+        espPageFunction: () {
+          Navigator.pop(context);
+        },
+        logoutFunction: () {
+          logout(context);
+        },
+        moodoPageFunction: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
+          );
+        },
+      ),
+      floatingActionButton: user.token != null
+          ? FloatingActionButton.extended(
+              label: const Text('Finalizar'),
+              onPressed: () {
+                Navigator.popUntil(
+                  context,
+                  ModalRoute.withName(HomePage.routeName),
+                );
+              },
+            )
+          : null,
+    );
   }
 }

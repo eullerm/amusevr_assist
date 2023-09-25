@@ -7,7 +7,10 @@ void logout(BuildContext context) {
   context.read<User>().removeToken();
   Navigator.pushReplacement(
     context,
-    MaterialPageRoute(builder: (context) => const HomePage()),
+    MaterialPageRoute(
+      settings: const RouteSettings(name: HomePage.routeName),
+      builder: (context) => const HomePage(),
+    ),
   );
 }
 

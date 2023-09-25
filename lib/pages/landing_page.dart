@@ -76,7 +76,10 @@ class _LandingPageState extends State<LandingPage> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(
+          settings: const RouteSettings(name: HomePage.routeName),
+          builder: (context) => const HomePage(),
+        ),
       );
     }
   }

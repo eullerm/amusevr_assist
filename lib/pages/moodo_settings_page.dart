@@ -35,13 +35,6 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
   Widget build(BuildContext context) {
     context.watch<User>();
 
-    if (user.token == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('AmuseVR Assist'),
@@ -109,6 +102,17 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
           Navigator.pop(context);
         },
       ),
+      floatingActionButton: user.token != null && user.deviceKey != null
+          ? FloatingActionButton.extended(
+              label: const Text('Próximo'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EspSettingsPage()),
+                );
+              },
+            )
+          : null,
     );
   }
 

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/login_page.dart';
 import 'package:amusevr_assist/pages/moodo_settings_page.dart';
@@ -10,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
+  static const String routeName = '/home-page';
   const HomePage({super.key});
 
   @override
@@ -18,52 +17,91 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late User user;
+
+  final List<String> items = [
+    "Logue com a sua conta Moodo;",
+    "Selecione o dispositivo Moodo que será usado;",
+    "Conecte-se na rede WiFi do ESP;",
+    "Selecione a rede que você deseja que o ESP se conecte;",
+    "Pronto, o ESP está configurado!",
+  ];
+
+  final List<String> warnings = [
+    "O ESP não liga nem desliga o dispositivo Moodo em si, apenas envia os comandos que ligam e desligam as fragrâncias.",
+    "Certifique-se de que o dispositivo Moodo está ligado e conectado a uma rede WiFi.",
+    "As configurações de WiFi do Moodo devem ser feitas pelo aplicativo oficial.",
+  ];
+
   @override
   void initState() {
-    user = Provider.of<User>(context, listen: false);
     super.initState();
+    user = Provider.of<User>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
     context.watch<User>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("AmuseVR Assist"),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-        alignment: Alignment.topCenter,
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            button(
-              text: "Logar com a conta Moodo",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              },
-              visible: user.token == null,
+            const SizedBox(
+              height: 16,
             ),
-            button(
-              text: "Selecionar WiFi",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const EspSettingsPage()),
+            const Text(
+              "Instruções:",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: CircleAvatar(
+                    child: Text((index + 1).toString()),
+                  ),
+                  title: Text(items[index]),
                 );
               },
             ),
-            button(
-              text: "Moodo",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
+            const SizedBox(
+              height: 16,
+            ),
+            const Divider(
+              height: 0,
+              thickness: 1,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            const Text(
+              "Avisos:",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: warnings.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: const CircleAvatar(
+                    child: Text(('*')),
+                  ),
+                  title: Text(warnings[index]),
                 );
               },
-              visible: user.token != null,
+            ),
+            const SizedBox(
+              height: 16,
             ),
           ],
         ),
@@ -92,43 +130,14 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-    );
-  }
-
-  Widget button({required String text, required Function() onTap, bool visible = true}) {
-    return Visibility(
-      visible: visible,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
-        width: MediaQuery.of(context).size.width / 2 - 64,
-        height: MediaQuery.of(context).size.width / 2 - 64,
-        decoration: BoxDecoration(
-          color: Colors.lightBlueAccent.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(16.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.0),
-          child: ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateColor.resolveWith((states) => Colors.lightBlueAccent.withOpacity(0.4)),
-            ),
-            onPressed: () {
-              onTap();
-            },
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
+      floatingActionButton: FloatingActionButton.extended(
+        label: const Text('Começar'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => user.token != null ? const MoodoSettingsPage() : LoginPage()),
+          );
+        },
       ),
     );
   }
