@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.amusevr_assist">
    <application
-        android:label="amusevr_assist"
+        android:label="AmuseVR Assist"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,7 +1,6 @@
 import 'package:amusevr_assist/api/moodo_api.dart';
 import 'package:amusevr_assist/models/device.dart';
 import 'package:amusevr_assist/models/user.dart';
-import 'package:amusevr_assist/pages/home_page.dart';
 import 'package:amusevr_assist/pages/esp_settings_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/custom_dialog.dart';
@@ -47,32 +46,9 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
             key: Key(device.id.toString()),
             leading: const Icon(Icons.device_hub),
             trailing: user.deviceKey == device.deviceKey
-                ? IconButton(
-                    icon: Icon(
-                      Icons.check_circle,
-                    ),
+                ? const Icon(
+                    Icons.check_circle,
                     color: Colors.lightGreen,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return CustomDialog(
-                            title: "Deseja desvincular o dispositivo ${device.name}?",
-                            items: {
-                              "Id": device.id,
-                              "Device Key": device.deviceKey,
-                              "Box Status": device.boxStatus,
-                              "Is Online": device.isOnline ? 'Sim' : 'Não',
-                              "Está carregando": device.isBatteryCharging ? 'Sim' : 'Não',
-                              "Bateria": "${device.batteryLevelPercent}%",
-                            },
-                            onConfirm: () {
-                              _handleItemUnselected(context, device.name);
-                            },
-                          );
-                        },
-                      );
-                    },
                   )
                 : null,
             title: Text(device.name),
@@ -121,7 +97,9 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
       context: context,
       builder: (context) {
         return CustomDialog(
-          title: device.name,
+          title: user.deviceKey == device.deviceKey
+              ? 'Deseja vincular o dispositivo ${device.name}?'
+              : 'Deseja desvincular o dispositivo ${device.name}?',
           items: {
             "Id": device.id,
             "Device Key": device.deviceKey,
@@ -131,7 +109,9 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
             "Bateria": "${device.batteryLevelPercent}%",
           },
           onConfirm: () {
-            _handleItemSelected(context, device.deviceKey, device.name);
+            user.deviceKey != device.deviceKey
+                ? _handleItemSelected(context, device.deviceKey, device.name)
+                : _handleItemUnselected(context, device.name);
           },
         );
       },

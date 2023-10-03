@@ -98,7 +98,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
       typeWPA = 1;
     }
 
-    EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA).then((response) {
+    EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA, user.deviceKey, user.token).then((response) {
       if (response.statusCode == 200) {
         showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
         setState(() {

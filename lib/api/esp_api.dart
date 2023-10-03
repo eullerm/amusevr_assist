@@ -12,17 +12,28 @@ class EspApi {
   static const String _ssid = 'ssid';
   static const String _password = 'password';
   static const String _connectionType = 'connectionType';
+  static const String _deviceKey = 'deviceKey';
+  static const String _token = 'token';
 
-  static Future<Response> connectToWifi(String ssid, String password, int connectionType) async {
+  static Future<Response> connectToWifi(String ssid, String password, int connectionType, int? devicekey, String? token) async {
+    Map body = {
+      _ssid: ssid,
+      _password: password,
+      _connectionType: connectionType,
+    };
+
+    if (token != null) {
+      body[_token] = token;
+      if (devicekey != null) {
+        body[_deviceKey] = devicekey;
+      }
+    }
+
     try {
       String message = '';
       final response = await http.post(
         Uri.parse('$_baseUrl/wifi'),
-        body: {
-          _ssid: ssid,
-          _password: password,
-          _connectionType: connectionType,
-        },
+        body: body,
       );
       if (response.statusCode == 200) {
         message = 'Sucesso';
