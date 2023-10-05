@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void logout(BuildContext context) {
-  context.read<User>().removeToken();
+  context.read<User>().removeUser();
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(

@@ -10,13 +10,18 @@ Future<void> main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
   int? deviceKey = prefs.getInt('deviceKey');
-  print('token: $token');
-  print('deviceKey: $deviceKey');
+  String? email = prefs.getString('email');
+  String? password = prefs.getString('password');
 
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (_) => User(token: token, deviceKey: deviceKey),
+        create: (_) => User(
+          token: token,
+          deviceKey: deviceKey,
+          email: email,
+          password: password,
+        ),
       ),
     ],
     child: const MyApp(),

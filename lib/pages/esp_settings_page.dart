@@ -98,19 +98,39 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
       typeWPA = 1;
     }
 
-    EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA, user.deviceKey, user.token).then((response) {
-      if (response.statusCode == 200) {
-        showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
-        setState(() {
-          step = 0; // Volta para tela de escolher rede
-        });
-      } else {
-        showCustomSnackBar(context, 'Falha ao se conectar! Tente novamente.', 'error');
-        setState(() {
-          step = 1; // Volta para tela de digitar senha
-        });
-      }
-    });
+    try {
+      EspApi.connectToWifi(
+        ssid,
+        _textControllerPassword.text,
+        typeWPA,
+        user.deviceKey,
+        user.token,
+        user.email,
+        user.password,
+      ).then((response) {
+        if (response.statusCode == 200) {
+          showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
+          setState(() {
+            step = 0; // Volta para tela de escolher rede
+          });
+        } else if (response.statusCode == 404) {
+          showCustomSnackBar(context, response.message, 'error');
+          setState(() {
+            step = 0; // Volta para tela de escolher rede
+          });
+        } else {
+          showCustomSnackBar(context, 'Falha ao se conectar! Tente novamente.', 'error');
+          setState(() {
+            step = 1; // Volta para tela de digitar senha
+          });
+        }
+      });
+    } catch (e) {
+      showCustomSnackBar(context, 'Falha ao se conectar! Tente novamente.', 'error');
+      setState(() {
+        step = 1; // Volta para tela de digitar senha
+      });
+    }
   }
 
   Widget listWifi() {

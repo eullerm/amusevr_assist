@@ -53,6 +53,8 @@ class _LoginPageState extends State<LoginPage> {
                   MoodoApi.login(_emailController.text, _passwordController.text).then((response) {
                     if (response.statusCode == 200) {
                       user.setToken(response.token!);
+                      user.setEmail(_emailController.text);
+                      user.setPassword(_passwordController.text);
                       Navigator.pop(context);
                     } else {
                       showCustomSnackBar(context, response.error!, 'error');

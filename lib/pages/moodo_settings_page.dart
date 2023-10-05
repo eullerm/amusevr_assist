@@ -98,8 +98,8 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
       builder: (context) {
         return CustomDialog(
           title: user.deviceKey == device.deviceKey
-              ? 'Deseja vincular o dispositivo ${device.name}?'
-              : 'Deseja desvincular o dispositivo ${device.name}?',
+              ? 'Deseja desvincular o dispositivo ${device.name}?'
+              : 'Deseja vincular o dispositivo ${device.name}?',
           items: {
             "Id": device.id,
             "Device Key": device.deviceKey,
