@@ -1,3 +1,4 @@
+import 'package:amusevr_assist/api/firebase_api.dart';
 import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/landing_page.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  FirebaseApi.initialize();
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');

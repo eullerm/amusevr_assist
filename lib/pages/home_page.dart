@@ -1,4 +1,5 @@
 import 'package:amusevr_assist/models/user.dart';
+import 'package:amusevr_assist/pages/create_account.dart';
 import 'package:amusevr_assist/pages/login_page.dart';
 import 'package:amusevr_assist/pages/moodo_settings_page.dart';
 import 'package:amusevr_assist/pages/esp_settings_page.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
     "O ESP não liga nem desliga o dispositivo Moodo em si, apenas envia os comandos que ligam e desligam as fragrâncias.",
     "Certifique-se de que o dispositivo Moodo está ligado e conectado a uma rede WiFi.",
     "As configurações de WiFi do Moodo devem ser feitas pelo aplicativo oficial.",
+    'É necessário possuir uma conta do AmuseVR para usar o software.'
   ];
 
   @override
@@ -99,6 +101,27 @@ class _HomePageState extends State<HomePage> {
                   title: Text(warnings[index]),
                 );
               },
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CreateAccountPage()),
+                      );
+                    },
+                    child: const Text('Criar conta do AmuseVR'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(
               height: 16,

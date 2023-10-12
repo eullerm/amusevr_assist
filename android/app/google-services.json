@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "982896399541",
+    "project_id": "amusevr-1bdd7",
+    "storage_bucket": "amusevr-1bdd7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982896399541:android:08052c28c8d9717497dafc",
+        "android_client_info": {
+          "package_name": "com.example.amusevr_assist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ9nGK6Dg8DadZxl6TqQ2iD6EWsn-nYX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982896399541:android:654e75d27ce02d2d97dafc",
+        "android_client_info": {
+          "package_name": "com.oculus.AMUSEVR"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ9nGK6Dg8DadZxl6TqQ2iD6EWsn-nYX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
