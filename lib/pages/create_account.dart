@@ -13,6 +13,7 @@ class CreateAccountPage extends StatefulWidget {
 class _CreateAccountPageState extends State<CreateAccountPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _wantToBeAuthor = false;
 
   Future<void> _createAccount() async {
     final email = _emailController.text.trim();
@@ -20,13 +21,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
     if (email.isEmpty && password.isEmpty) {
       showCustomSnackBar(context, 'Por favor, digite o email e a senha!', 'error');
-
       return;
     }
 
     if (email.isEmpty) {
       showCustomSnackBar(context, 'O campo email está vazio!', 'error');
-
       return;
     } else if (!isEmailValid(email)) {
       showCustomSnackBar(context, 'Email inválido. Por favor, insira um email válido.', 'error');
@@ -35,11 +34,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
     if (password.isEmpty) {
       showCustomSnackBar(context, 'O campo senha está vazio!', 'error');
-
       return;
     }
 
-    await FirebaseApi.createAccount(email, password).then((value) {
+    await FirebaseApi.createAccount(email, password, _wantToBeAuthor).then((value) {
       if (value.statusCode == 200) {
         Navigator.of(context).pop();
         showCustomSnackBar(context, value.message, 'success');
@@ -72,6 +70,20 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             const SizedBox(height: 20.0),
             PasswordField(
               passwordController: _passwordController,
+            ),
+            const SizedBox(height: 20.0),
+            Row(
+              children: [
+                Checkbox(
+                  value: _wantToBeAuthor,
+                  onChanged: (value) {
+                    setState(() {
+                      _wantToBeAuthor = value!;
+                    });
+                  },
+                ),
+                const Text('Quero ser um autor'),
+              ],
             ),
             const SizedBox(height: 20.0),
             ElevatedButton(
