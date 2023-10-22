@@ -31,6 +31,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
   bool isObscure = true;
   int step = 0;
   late User user;
+  CanGetScannedResults? can;
 
   RegExp regexWPA = RegExp(r'\bWPA\b', caseSensitive: false);
   RegExp regexWPA2 = RegExp(r'\bWPA2\b', caseSensitive: false);
@@ -48,8 +49,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
   }
 
   void _startListeningToScannedResults() async {
-    final can = await WiFiScan.instance.canGetScannedResults();
-    switch (can) {
+    can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
+    switch (can!) {
       case CanGetScannedResults.yes:
         subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
           setState(() => wifiList = results);
@@ -57,22 +58,21 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
         break;
       case CanGetScannedResults.notSupported:
         print("Not supported");
-        // TODO: Handle this case.
         break;
       case CanGetScannedResults.noLocationPermissionRequired:
         print("No located");
         break;
       case CanGetScannedResults.noLocationPermissionDenied:
         print('Denied');
-        // TODO: Handle this case.
         break;
       case CanGetScannedResults.noLocationPermissionUpgradeAccuracy:
         print("Upgrade");
-        // TODO: Handle this case.
         break;
       case CanGetScannedResults.noLocationServiceDisabled:
         print("Disabled");
-        // TODO: Handle this case.
+        break;
+      default:
+        showCustomSnackBar(context, can.toString(), 'error');
         break;
     }
   }
@@ -90,24 +90,16 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
       step = 2; // Vai para tela de loading
     });
 
-    late int typeWPA;
+    late String typeWPA;
 
     if (regexWPA2.hasMatch(wpa)) {
-      typeWPA = 2;
+      typeWPA = '2';
     } else if (regexWPA.hasMatch(wpa)) {
-      typeWPA = 1;
+      typeWPA = '1';
     }
 
     try {
-      EspApi.connectToWifi(
-        ssid,
-        _textControllerPassword.text,
-        typeWPA,
-        user.deviceKey,
-        user.token,
-        user.email,
-        user.password,
-      ).then((response) {
+      EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA, user.deviceKey as String, user.token).then((response) {
         if (response.statusCode == 200) {
           showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
           setState(() {
@@ -139,13 +131,14 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
         ? Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
-              children: const [
+              children: [
                 Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
                 Text(
                   "Nenhuma rede encontada!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+                Text(can.toString()),
                 SizedBox(
                   height: 8,
                 ),
@@ -164,6 +157,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+                Text(can.toString()),
                 const SizedBox(
                   height: 8,
                 ),

@@ -8,46 +8,38 @@ class Response {
 }
 
 class EspApi {
-  static const String _baseUrl = 'http://amusevr';
+  static const String _baseUrl = 'http://10.1.1.1';
   static const String _ssid = 'ssid';
   static const String _password = 'password';
   static const String _connectionType = 'connectionType';
   static const String _deviceKey = 'deviceKey';
   static const String _token = 'token';
-  static const String _email = 'email';
-  static const String _emailPassword = 'emailPassword';
 
   static Future<Response> connectToWifi(
     String ssid,
     String password,
-    int connectionType,
-    int? devicekey,
+    String connectionType,
+    String? devicekey,
     String? token,
-    String? email,
-    String? emailPassword,
   ) async {
-    Map body = {
+    Map<String, String> queryParams = {
       _ssid: ssid,
       _password: password,
       _connectionType: connectionType,
     };
 
     if (token != null) {
-      body[_token] = token;
+      queryParams[_token] = token;
       if (devicekey != null) {
-        body[_deviceKey] = devicekey;
-      }
-      if (email != null) {
-        body[_email] = email;
-        body[_emailPassword] = emailPassword;
+        queryParams[_deviceKey] = devicekey;
       }
     }
 
     try {
       String message = '';
+      String queryString = Uri(queryParameters: queryParams).query;
       final response = await http.post(
-        Uri.parse('$_baseUrl/wifi'),
-        body: body,
+        Uri.parse('$_baseUrl/wifi?$queryString'),
       );
       print(response.toString());
       if (response.statusCode == 200) {

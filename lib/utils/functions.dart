@@ -31,3 +31,10 @@ void showCustomSnackBar(BuildContext context, String message, String typeMessage
       ),
     );
 }
+
+bool isEmailValid(String email) {
+  final pattern = r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*$';
+  final regExp = RegExp(pattern);
+
+  return regExp.hasMatch(email);
+}

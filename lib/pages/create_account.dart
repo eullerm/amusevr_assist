@@ -28,7 +28,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       showCustomSnackBar(context, 'O campo email está vazio!', 'error');
 
       return;
+    } else if (!isEmailValid(email)) {
+      showCustomSnackBar(context, 'Email inválido. Por favor, insira um email válido.', 'error');
+      return;
     }
+
     if (password.isEmpty) {
       showCustomSnackBar(context, 'O campo senha está vazio!', 'error');
 
