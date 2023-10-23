@@ -31,7 +31,6 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
   bool isObscure = true;
   int step = 0;
   late User user;
-  CanGetScannedResults? can;
 
   RegExp regexWPA = RegExp(r'\bWPA\b', caseSensitive: false);
   RegExp regexWPA2 = RegExp(r'\bWPA2\b', caseSensitive: false);
@@ -49,8 +48,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
   }
 
   void _startListeningToScannedResults() async {
-    can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
-    switch (can!) {
+    CanGetScannedResults can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
+    switch (can) {
       case CanGetScannedResults.yes:
         subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
           setState(() => wifiList = results);
@@ -138,7 +137,6 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Text(can.toString()),
                 SizedBox(
                   height: 8,
                 ),
@@ -157,7 +155,6 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                Text(can.toString()),
                 const SizedBox(
                   height: 8,
                 ),

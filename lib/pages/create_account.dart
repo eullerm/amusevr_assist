@@ -11,6 +11,8 @@ class CreateAccountPage extends StatefulWidget {
 }
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
+  final TextEditingController _nameController = TextEditingController();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _wantToBeAuthor = false;
@@ -18,6 +20,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   Future<void> _createAccount() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
+    final name = _nameController.text.trim();
 
     if (email.isEmpty && password.isEmpty) {
       showCustomSnackBar(context, 'Por favor, digite o email e a senha!', 'error');
@@ -37,7 +40,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       return;
     }
 
-    await FirebaseApi.createAccount(email, password, _wantToBeAuthor).then((value) {
+    await FirebaseApi.createAccount(email, password, name, _wantToBeAuthor).then((value) {
       if (value.statusCode == 200) {
         Navigator.of(context).pop();
         showCustomSnackBar(context, value.message, 'success');
@@ -59,6 +62,14 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const Text('Crie uma conta para usar o software AmuseVR'),
+            const SizedBox(height: 20.0),
+            TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Nome',
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 20.0),
             TextFormField(
               controller: _emailController,

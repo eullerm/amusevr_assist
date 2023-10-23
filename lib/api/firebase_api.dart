@@ -16,7 +16,7 @@ class FirebaseApi {
     Firebase.initializeApp();
   }
 
-  static Future<Response> createAccount(String email, String password, bool wantToBeAuthor) async {
+  static Future<Response> createAccount(String email, String password, String name, bool wantToBeAuthor) async {
     const codec = Utf8Codec();
     final key = codec.encode(password);
     final data = Uint8List.fromList(key);
@@ -25,7 +25,13 @@ class FirebaseApi {
 
     try {
       final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
-      await usersCollection.add({"email": email, "password": hashedPassword, 'author': wantToBeAuthor});
+      DocumentReference documentReference = usersCollection.doc(email);
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+      if (documentSnapshot.exists) {
+        return Response(statusCode: 400, message: "Email já cadastrado!");
+      } else {
+        await documentReference.set({"email": email, "password": hashedPassword, "name": name, "author": wantToBeAuthor});
+      }
       return Response(statusCode: 200, message: "Conta criada com sucesso!");
     } catch (e) {
       return Response(statusCode: 400, message: e.toString());
