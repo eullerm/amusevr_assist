@@ -30,7 +30,7 @@ class FirebaseApi {
       if (documentSnapshot.exists) {
         return Response(statusCode: 400, message: "Email já cadastrado!");
       } else {
-        await documentReference.set({"email": email, "password": hashedPassword, "name": name, "author": wantToBeAuthor});
+        await documentReference.set({"email": email, "password": hashedPassword, "name": name, "isAuthor": wantToBeAuthor});
       }
       return Response(statusCode: 200, message: "Conta criada com sucesso!");
     } catch (e) {
