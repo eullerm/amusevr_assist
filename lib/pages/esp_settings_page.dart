@@ -21,15 +21,17 @@ class EspSettingsPage extends StatefulWidget {
   State<EspSettingsPage> createState() => _EspSettingsPageState();
 }
 
-class _EspSettingsPageState extends State<EspSettingsPage> {
+class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingObserver {
   List<WiFiAccessPoint> wifiList = <WiFiAccessPoint>[];
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';
   String password = '';
   String wpa = '';
-  TextEditingController _textControllerPassword = TextEditingController();
+  final TextEditingController _textControllerPassword = TextEditingController();
   bool isObscure = true;
   int step = 0;
+  String errorMessage = 'Verifique se o aplicativo possui a permissão necessária e tente novamente!';
+  CanGetScannedResults? can;
   late User user;
 
   RegExp regexWPA = RegExp(r'\bWPA\b', caseSensitive: false);
@@ -38,39 +40,67 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
   void initState() {
     super.initState();
     user = Provider.of<User>(context, listen: false);
+    WidgetsBinding.instance.addObserver(this);
     _startListeningToScannedResults();
   }
 
   @override
   dispose() {
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+
     subscription?.cancel();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _startListeningToScannedResults();
+    }
+  }
+
   void _startListeningToScannedResults() async {
-    CanGetScannedResults can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
+    can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
     switch (can) {
       case CanGetScannedResults.yes:
         subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
-          setState(() => wifiList = results);
+          setState(() {
+            wifiList = results;
+          });
         });
         break;
       case CanGetScannedResults.notSupported:
-        print("Not supported");
+        setState(() {
+          errorMessage = "O aparelho não consegue listar os pontos de acesso WiFi!";
+        });
         break;
       case CanGetScannedResults.noLocationPermissionRequired:
-        print("No located");
+        setState(() {
+          errorMessage = "O aplicativo precisa de permissão para listar os pontos de acesso WiFi!";
+        });
         break;
       case CanGetScannedResults.noLocationPermissionDenied:
-        print('Denied');
+        setState(() {
+          errorMessage =
+              "O aplicativo precisa de permissão para listar os pontos de acesso WiFi!\nAtive a localização do celular e tente voltar a esta tela novamente!";
+        });
         break;
       case CanGetScannedResults.noLocationPermissionUpgradeAccuracy:
-        print("Upgrade");
+        setState(() {
+          errorMessage =
+              "O GPS precisa de permissão mais precisa para listar os pontos de acesso WiFi!\nAtive a permissão do celular e tente voltar a esta tela novamente!";
+        });
         break;
       case CanGetScannedResults.noLocationServiceDisabled:
-        print("Disabled");
+        setState(() {
+          errorMessage =
+              "O GPS do celular precisa estar ligado para listar os pontos de acesso WiFi!\nAtive a localização do celular e tente voltar a esta tela  novamente!";
+        });
         break;
       default:
+        setState(() {
+          errorMessage = can.toString();
+        });
         showCustomSnackBar(context, can.toString(), 'error');
         break;
     }
@@ -131,19 +161,19 @@ class _EspSettingsPageState extends State<EspSettingsPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               children: [
-                Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
-                Text(
+                const Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
+                const Text(
                   "Nenhuma rede encontada!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 Text(
-                  "Verifique se o aplicativo possui a permissão necessária e tente novamente.",
+                  errorMessage,
                   textAlign: TextAlign.center,
-                ),
+                )
               ],
             ),
           )
