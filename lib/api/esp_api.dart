@@ -38,10 +38,10 @@ class EspApi {
     try {
       String message = '';
       String queryString = Uri(queryParameters: queryParams).query;
+
       final response = await http.post(
         Uri.parse('$_baseUrl/wifi?$queryString'),
       );
-      print(response.toString());
       if (response.statusCode == 200) {
         message = 'Sucesso';
       } else {

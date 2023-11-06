@@ -128,7 +128,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
     }
 
     try {
-      EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA, user.deviceKey as String, user.token).then((response) {
+      EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA, user.deviceKey.toString(), user.token).then((response) {
         if (response.statusCode == 200) {
           showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
           setState(() {
@@ -147,7 +147,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
         }
       });
     } catch (e) {
-      showCustomSnackBar(context, 'Falha ao se conectar! Tente novamente.', 'error');
+      showCustomSnackBar(context, e.toString(), 'error');
       setState(() {
         step = 1; // Volta para tela de digitar senha
       });
