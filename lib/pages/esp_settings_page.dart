@@ -26,7 +26,6 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';
   String password = '';
-  String wpa = '';
   final TextEditingController _textControllerPassword = TextEditingController();
   bool isObscure = true;
   int step = 0;
@@ -34,8 +33,6 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
   CanGetScannedResults? can;
   late User user;
 
-  RegExp regexWPA = RegExp(r'\bWPA\b', caseSensitive: false);
-  RegExp regexWPA2 = RegExp(r'\bWPA2\b', caseSensitive: false);
   @override
   void initState() {
     super.initState();
@@ -106,10 +103,9 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
     }
   }
 
-  void setWifi(String newSSID, String newWPA) {
+  void setWifi(String newSSID) {
     setState(() {
       ssid = newSSID;
-      wpa = newWPA;
       step = 1;
     });
   }
@@ -119,16 +115,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
       step = 2; // Vai para tela de loading
     });
 
-    late String typeWPA;
-
-    if (regexWPA2.hasMatch(wpa)) {
-      typeWPA = '2';
-    } else if (regexWPA.hasMatch(wpa)) {
-      typeWPA = '1';
-    }
-
     try {
-      EspApi.connectToWifi(ssid, _textControllerPassword.text, typeWPA, user.deviceKey.toString(), user.token).then((response) {
+      EspApi.connectToWifi(ssid, _textControllerPassword.text, user.deviceKey.toString(), user.token).then((response) {
         if (response.statusCode == 200) {
           showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
           setState(() {
@@ -195,7 +183,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
                   itemBuilder: (context, index) {
                     final network = wifiList[index];
                     return AccessPointTile(
-                      onConfirm: () => {setWifi(network.ssid, network.capabilities)},
+                      onConfirm: () => {setWifi(network.ssid)},
                       accessPoint: network,
                     );
                   },

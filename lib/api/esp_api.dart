@@ -18,14 +18,12 @@ class EspApi {
   static Future<Response> connectToWifi(
     String ssid,
     String password,
-    String connectionType,
     String? devicekey,
     String? token,
   ) async {
     Map<String, String> queryParams = {
       _ssid: ssid,
       _password: password,
-      _connectionType: connectionType,
     };
 
     if (token != null) {
