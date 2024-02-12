@@ -11,7 +11,6 @@ class EspApi {
   static const String _baseUrl = 'http://10.1.1.1';
   static const String _ssid = 'ssid';
   static const String _password = 'password';
-  static const String _connectionType = 'connectionType';
   static const String _deviceKey = 'deviceKey';
   static const String _token = 'token';
 
@@ -31,6 +30,9 @@ class EspApi {
       if (devicekey != null) {
         queryParams[_deviceKey] = devicekey;
       }
+    } else {
+      queryParams[_token] = '0';
+      queryParams[_deviceKey] = '0';
     }
 
     try {
