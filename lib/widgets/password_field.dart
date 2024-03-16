@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController passwordController;
+  final String? Function(String?)? validator;
+
   const PasswordField({
     Key? key,
     required this.passwordController,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -35,6 +38,7 @@ class _PasswordFieldState extends State<PasswordField> {
           onPressed: _togglePasswordVisibility,
         ),
       ),
+      validator: widget.validator,
     );
   }
 }

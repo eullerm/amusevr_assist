@@ -57,6 +57,20 @@ class _LandingPageState extends State<LandingPage> {
           Text("O ESP é responsável por controlar os periféricos como luz e ventilador"),
         ],
       ),
+    ),
+    CustomStep(
+      stepNumber: 3,
+      content: Column(
+        children: [
+          Image.asset(
+            'assets/images/settings.png',
+            width: 60,
+            height: 60,
+          ),
+          SizedBox(height: 20),
+          Text("Com ele também será possível selecionar qual dispositivo Moodo será usado."),
+        ],
+      ),
     )
   ];
 
@@ -136,7 +150,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
               TextButton(
                 onPressed: () => goToNextStep(skip: true),
-                child: Text('Pular'),
+                child: const Text('Pular'),
               ),
               currentStep == steps.length - 1
                   ? ElevatedButton(

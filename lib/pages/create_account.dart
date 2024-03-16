@@ -16,8 +16,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _wantToBeAuthor = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Future<void> _createAccount() async {
+    if (!_formKey.currentState!.validate()) return;
+
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final name = _nameController.text.trim();
@@ -58,50 +61,74 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const Text('Crie uma conta para usar o software AmuseVR'),
-            const SizedBox(height: 20.0),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nome',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            PasswordField(
-              passwordController: _passwordController,
-            ),
-            const SizedBox(height: 20.0),
-            Row(
-              children: [
-                Checkbox(
-                  value: _wantToBeAuthor,
-                  onChanged: (value) {
-                    setState(() {
-                      _wantToBeAuthor = value!;
-                    });
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                const Text('Crie uma conta para usar o software AmuseVR'),
+                const SizedBox(height: 20.0),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Obrigatório';
+                    }
+                    return null;
                   },
                 ),
-                const Text('Quero ser um autor'),
+                const SizedBox(height: 20.0),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Obrigatório';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20.0),
+                PasswordField(
+                  passwordController: _passwordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Obrigatório';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20.0),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _wantToBeAuthor,
+                      onChanged: (value) {
+                        setState(() {
+                          _wantToBeAuthor = value!;
+                        });
+                      },
+                    ),
+                    const Text('Quero ser um autor'),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: _createAccount,
+                  child: const Text('Criar conta'),
+                ),
               ],
             ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _createAccount,
-              child: const Text('Criar conta'),
-            ),
-          ],
+          ),
         ),
       ),
     );

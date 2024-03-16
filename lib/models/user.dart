@@ -3,27 +3,40 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class User with ChangeNotifier {
-  String? _token;
+  String? _tokenMoodo;
   int? _deviceKey;
   String? _email;
   String? _password;
+  String? _espIpAddress;
   SharedPreferences? _prefs;
-  User({token, deviceKey, email, password}) {
-    _token = token;
+  bool _isAuthenticated = false;
+
+  User({tokenMoodo, deviceKey, email, password, espIpAddress, isAuthenticated}) {
+    _tokenMoodo = tokenMoodo;
     _deviceKey = deviceKey;
     _email = email;
     _password = password;
+    _espIpAddress = espIpAddress;
+    _isAuthenticated = isAuthenticated;
     SharedPreferences.getInstance().then((value) => _prefs = value);
   }
 
-  String? get token => _token;
+  String? get tokenMoodo => _tokenMoodo;
   int? get deviceKey => _deviceKey;
   String? get email => _email;
   String? get password => _password;
+  String? get espIpAddress => _espIpAddress;
+  bool get isAuthenticated => _isAuthenticated;
 
-  void setToken(String token) {
-    _token = token;
-    _prefs!.setString('token', token);
+  void setIsAuthenticated(bool isAuthenticated) {
+    _isAuthenticated = isAuthenticated;
+    _prefs!.setBool('isAuthenticated', isAuthenticated);
+    notifyListeners();
+  }
+
+  void setTokenMoodo(String token) {
+    _tokenMoodo = token;
+    _prefs!.setString('tokenMoodo', token);
     notifyListeners();
   }
 
@@ -45,13 +58,24 @@ class User with ChangeNotifier {
     notifyListeners();
   }
 
+  void setEspIpAddress(String espIpAddress) {
+    _espIpAddress = espIpAddress;
+    _prefs!.setString('espIpAddress', espIpAddress);
+    notifyListeners();
+  }
+
   void removeUser() {
-    _token = null;
+    _tokenMoodo = null;
+    _isAuthenticated = false;
     _email = null;
     _password = null;
-    _prefs!.remove('token');
+    _espIpAddress = null;
+    _prefs!.remove('tokenMoodo');
     _prefs!.remove('email');
     _prefs!.remove('password');
+    _prefs!.remove('espIpAddress');
+    _prefs!.remove('deviceKey');
+    _prefs!.remove('isAuthenticated');
     notifyListeners();
   }
 

@@ -19,16 +19,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late User user;
 
-  final List<String> items = [
-    "Logue com a sua conta Moodo;",
-    "Selecione o dispositivo Moodo que será usado;",
+  final List<String> itemsMoodo = [
+    "Logue com a sua conta AmuseVR;",
+    "Vincule a sua conta Moodo com a sua conta AmuseVR"
+        "Selecione o dispositivo Moodo que será usado;",
+  ];
+
+  final List<String> itemsESP = [
+    "Logue com a sua conta AmuseVR;",
     "Conecte-se na rede WiFi do ESP;",
     "Selecione a rede que você deseja que o ESP se conecte;",
     "Pronto, o ESP está configurado!",
   ];
 
   final List<String> warnings = [
-    "O ESP não liga nem desliga o dispositivo Moodo em si, apenas envia os comandos que ligam e desligam as fragrâncias.",
+    "O AmuseVR não liga nem desliga o dispositivo Moodo em si, apenas envia os comandos que ligam e desligam as fragrâncias.",
     "Certifique-se de que o dispositivo Moodo está ligado e conectado a uma rede WiFi.",
     "As configurações de WiFi do Moodo devem ser feitas pelo aplicativo oficial.",
     'É necessário possuir uma conta do AmuseVR para usar o software.'
@@ -55,7 +60,7 @@ class _HomePageState extends State<HomePage> {
               height: 16,
             ),
             const Text(
-              "Instruções:",
+              "Instruções Moodo:",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -63,13 +68,44 @@ class _HomePageState extends State<HomePage> {
             ),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: items.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: itemsMoodo.length,
               itemBuilder: (context, index) {
                 return ListTile(
                   leading: CircleAvatar(
                     child: Text((index + 1).toString()),
                   ),
-                  title: Text(items[index]),
+                  title: Text(itemsMoodo[index]),
+                );
+              },
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            const Divider(
+              height: 0,
+              thickness: 1,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            const Text(
+              "Instruções ESP:",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: itemsESP.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: CircleAvatar(
+                    child: Text((index + 1).toString()),
+                  ),
+                  title: Text(itemsESP[index]),
                 );
               },
             ),
@@ -92,6 +128,7 @@ class _HomePageState extends State<HomePage> {
             ),
             ListView.builder(
               shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: warnings.length,
               itemBuilder: (context, index) {
                 return ListTile(
@@ -118,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                         MaterialPageRoute(builder: (context) => const CreateAccountPage()),
                       );
                     },
-                    child: const Text('Criar conta do AmuseVR'),
+                    child: const Text('Criar conta'),
                   ),
                 ],
               ),
@@ -130,7 +167,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       drawer: CustomDrawer(
-        isLogged: user.token != null,
+        isLogged: user.isAuthenticated,
         actualPage: 'homePage',
         homeFunction: () {
           Navigator.pop(context);
@@ -158,7 +195,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => user.token != null ? const MoodoSettingsPage() : LoginPage()),
+            MaterialPageRoute(builder: (context) => user.isAuthenticated ? const MoodoSettingsPage() : LoginPage()),
           );
         },
       ),

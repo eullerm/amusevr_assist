@@ -11,19 +11,21 @@ Future<void> main() async {
   FirebaseApi.initialize();
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('token');
+  String? tokenMoodo = prefs.getString('tokenMoodo');
   int? deviceKey = prefs.getInt('deviceKey');
   String? email = prefs.getString('email');
   String? password = prefs.getString('password');
+  bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
 
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
         create: (_) => User(
-          token: token,
+          tokenMoodo: tokenMoodo,
           deviceKey: deviceKey,
           email: email,
           password: password,
+          isAuthenticated: isAuthenticated,
         ),
       ),
     ],

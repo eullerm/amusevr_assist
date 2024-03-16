@@ -1,39 +1,28 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class Response {
   final int statusCode;
   final String message;
+  final Map<String, dynamic>? body;
 
-  Response({required this.statusCode, required this.message});
+  Response({required this.statusCode, required this.message, this.body});
 }
 
 class EspApi {
   static const String _baseUrl = 'http://10.1.1.1';
   static const String _ssid = 'ssid';
   static const String _password = 'password';
-  static const String _deviceKey = 'deviceKey';
-  static const String _token = 'token';
 
   static Future<Response> connectToWifi(
     String ssid,
     String password,
-    String? devicekey,
-    String? token,
   ) async {
     Map<String, String> queryParams = {
       _ssid: ssid,
       _password: password,
     };
-
-    if (token != null) {
-      queryParams[_token] = token;
-      if (devicekey != null) {
-        queryParams[_deviceKey] = devicekey;
-      }
-    } else {
-      queryParams[_token] = '0';
-      queryParams[_deviceKey] = '0';
-    }
 
     try {
       String message = '';
@@ -48,7 +37,7 @@ class EspApi {
         message = 'Falha';
       }
 
-      return Response(statusCode: response.statusCode, message: message);
+      return Response(statusCode: response.statusCode, message: message, body: jsonDecode(response.body));
     } catch (e) {
       return Response(statusCode: 404, message: 'Falha ao se conectar! Verifique se você está conectado no ESP.');
     }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:amusevr_assist/api/esp_api.dart';
+import 'package:amusevr_assist/api/firebase_api.dart';
 import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/home_page.dart';
 import 'package:amusevr_assist/pages/moodo_settings_page.dart';
@@ -116,9 +117,11 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
     });
 
     try {
-      EspApi.connectToWifi(ssid, _textControllerPassword.text, user.deviceKey.toString(), user.token).then((response) {
+      EspApi.connectToWifi(ssid, _textControllerPassword.text).then((response) {
         if (response.statusCode == 200) {
           showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
+          user.setEspIpAddress(response.body?['ip']);
+          FirebaseApi.settings(user.email!, {'espIpAddress': response.body?['ip']});
           setState(() {
             step = 0; // Volta para tela de escolher rede
           });
@@ -260,7 +263,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
         ),
       ),
       drawer: CustomDrawer(
-        isLogged: user.token != null,
+        isLogged: user.isAuthenticated,
         actualPage: 'espSettingsPage',
         homeFunction: () {
           Navigator.pop(context);
@@ -279,17 +282,6 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
           );
         },
       ),
-      floatingActionButton: user.token != null
-          ? FloatingActionButton.extended(
-              label: const Text('Finalizar'),
-              onPressed: () {
-                Navigator.popUntil(
-                  context,
-                  ModalRoute.withName(HomePage.routeName),
-                );
-              },
-            )
-          : null,
     );
   }
 }
