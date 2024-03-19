@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:amusevr_assist/api/firebase_api.dart';
 import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/landing_page.dart';
@@ -6,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
 
   FirebaseApi.initialize();
@@ -45,5 +48,12 @@ class MyApp extends StatelessWidget {
       ),
       home: LandingPage(),
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }

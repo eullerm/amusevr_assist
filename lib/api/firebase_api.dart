@@ -101,7 +101,7 @@ class FirebaseApi {
     try {
       final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
       DocumentReference documentReference = usersCollection.doc(email);
-      await documentReference.update(settings);
+      await documentReference.update(settings).timeout(const Duration(seconds: 10));
       return Response(statusCode: 200, message: "Configurações atualizadas com sucesso!");
     } catch (e) {
       return Response(statusCode: 400, message: e.toString());

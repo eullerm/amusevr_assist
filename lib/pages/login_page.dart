@@ -95,9 +95,18 @@ class _LoginPageState extends State<LoginPage> {
       FirebaseApi.login(_emailController.text, _passwordController.text).then((response) {
         if (response.statusCode == 200) {
           user.setIsAuthenticated(true);
-          user.setDeviceKey(response.body!['deviceKey']);
-          user.setTokenMoodo(response.body!['tokenMoodo']);
-          user.setEspIpAddress(response.body!['espIpAddress']);
+          if (response.body!['deviceKey'] != null) {
+            user.setDeviceKey(response.body!['deviceKey']);
+          }
+          if (response.body!['tokenMoodo'] != null) {
+            user.setTokenMoodo(response.body!['tokenMoodo']);
+          }
+          if (response.body!['espIpAddress'] != null) {
+            user.setEspIpAddress(response.body!['espIpAddress']);
+          }
+          if (response.body!['email'] != null) {
+            user.setEmail(response.body!['email']);
+          }
           Navigator.pop(context);
         } else {
           showCustomSnackBar(context, response.message, 'error');

@@ -22,6 +22,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
   late User user;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _showLoginDialog = false;
 
   @override
   void initState() {
@@ -33,25 +34,17 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
         });
       });
     } else {
-      showDialog(
-        context: context,
-        builder: (_) => Center(
-          child: SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: modalLogin(),
-          ),
-        ),
-      );
+      _showLoginDialog = true;
     }
     super.initState();
   }
 
-  void linkMoodoAccount() {
+  void linkMoodoAccount(BuildContext context) {
     try {
       MoodoApi.login(_emailController.text, _passwordController.text).then((response) {
         if (response.statusCode == 200) {
           user.setTokenMoodo(response.token!);
-          MoodoApi.fetchDevices(user.tokenMoodo!).then((value) {
+          MoodoApi.fetchDevices(response.token!).then((value) {
             setState(() {
               devices = value;
             });
@@ -68,10 +61,10 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
     }
   }
 
-  Widget modalLogin() {
+  Widget modalLogin({required BuildContext context}) {
     return AlertDialog(
       title: const Text(
-        'Entre com sua conta AmuseVR que deseja vincular ao ESP',
+        'Entre com sua conta Moodo que deseja vincular ao AmuseVR',
         style: TextStyle(
           fontSize: 18.0,
           fontWeight: FontWeight.bold,
@@ -110,12 +103,32 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> {
         ),
         ElevatedButton(
           onPressed: () {
-            linkMoodoAccount();
+            linkMoodoAccount(context);
           },
           child: const Text('Vincular'),
         ),
       ],
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_showLoginDialog) {
+      // Show the login dialog when the page is first built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (dialogContext) => Center(
+            child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: modalLogin(context: dialogContext),
+            ),
+          ),
+        );
+      });
+      _showLoginDialog = false;
+    }
   }
 
   @override

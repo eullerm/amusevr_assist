@@ -37,6 +37,7 @@ class MoodoApi {
           _password: password,
         }),
       );
+
       final Map<String, dynamic> responseData = json.decode(response.body);
       return Response(
         statusCode: response.statusCode,
@@ -78,7 +79,6 @@ class MoodoApi {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         List devices = jsonData['boxes'];
-        print(devices);
         return devices.map((device) => Device.fromMap(device)).toList();
       } else {
         return [];
