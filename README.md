@@ -65,4 +65,5 @@ Enjoy the multisensory experiences provided by AMUSEVR with the help of AMUSEVR 
   <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-16.png">
   
 - **Tela de carregamento/Loading screen**
+  
   <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-17.png">
