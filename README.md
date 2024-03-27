@@ -1,8 +1,13 @@
+## Sumário
+- [Português](#user-content-pt)
+- [English](#user-content-en)
+- [Telas/Screens](#user-content-telas/screens)
+
 # AMUSEVR Assist
 
 O AMUSEVR Assist é um aplicativo móvel projetado para auxiliar na configuração do ESP e do Moodo para o AMUSEVR, uma plataforma inovadora para criação de experiências imersivas multissensoriais em 360°.
 
-## Instalação
+## :zap: Instalação
 Para instalar o AMUSEVR Assist, siga estas etapas:
 
 1. Certifique-se de ter um smartphone compatível.
@@ -17,7 +22,7 @@ Aproveite as experiências multissensoriais proporcionadas pelo AMUSEVR com a aj
 
 AMUSEVR Assist is a mobile application designed to assist in configuring ESP and Moodo for AMUSEVR, an innovative platform for creating immersive multisensory experiences in 360°.
 
-## Installation
+## :zap: Installation
 To install AMUSEVR Assist, follow these steps:
 
 1. Make sure you have a compatible smartphone.
@@ -27,3 +32,37 @@ To install AMUSEVR Assist, follow these steps:
 5. After installation, open the application and follow the instructions to configure ESP and Moodo according to your preferences.
 
 Enjoy the multisensory experiences provided by AMUSEVR with the help of AMUSEVR Assist!
+
+
+## :iphone: Telas/Screens
+
+- **Telas iniciais/Initial creens**
+
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-1.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-2.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-3.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-4.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-5.png">
+
+- **Tela de cadastro/Registration screen**
+
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-6.png">
+  
+- **Tela de login/Login screen**
+
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-7.png">
+    
+- **Telas de configuração/Configuration screen**
+
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-8.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-9.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-10.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-11.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-12.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-13.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-14.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-15.png">
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-16.png">
+  
+- **Tela de carregamento/Loading screen**
+  <img height="300" src="https://github.com/eullerm/amusevr_assist/blob/main/screens%20images/tela-amusevr-assist-17.png">
