@@ -3,7 +3,7 @@
 - [English](#user-content-en)
 - [Telas/Screens](#user-content-telas/screens)
 
-# AMUSEVR Assist
+<div id="pt"> AMUSEVR Assist </div>
 
 O AMUSEVR Assist é um aplicativo móvel projetado para auxiliar na configuração do ESP e do Moodo para o AMUSEVR, uma plataforma inovadora para criação de experiências imersivas multissensoriais em 360°.
 
