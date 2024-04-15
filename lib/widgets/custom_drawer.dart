@@ -64,12 +64,15 @@ class CustomDrawer extends StatelessWidget {
               isSelected: actualPage.toUpperCase() == 'MOODOSETTINGSPAGE',
             ),
           ),
-          button(
-            text: 'ESP WiFi',
-            unselectedIcon: Icons.wifi_outlined,
-            selectedIcon: Icons.wifi,
-            function: espPageFunction,
-            isSelected: actualPage.toUpperCase() == 'ESPSETTINGSPAGE',
+          Visibility(
+            visible: isLogged,
+            child: button(
+              text: 'ESP WiFi',
+              unselectedIcon: Icons.wifi_outlined,
+              selectedIcon: Icons.wifi,
+              function: espPageFunction,
+              isSelected: actualPage.toUpperCase() == 'ESPSETTINGSPAGE',
+            ),
           ),
           const Divider(color: Colors.black54),
           Visibility(
