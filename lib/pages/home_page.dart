@@ -148,20 +148,23 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const CreateAccountPage()),
-                      );
-                    },
-                    child: const Text('Criar conta'),
+                  Visibility(
+                    visible: !user.isAuthenticated,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const CreateAccountPage()),
+                        );
+                      },
+                      child: const Text('Criar conta'),
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(
-              height: 16,
+              height: 50,
             ),
           ],
         ),

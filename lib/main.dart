@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AmuseVR Assist',
       theme: ThemeData(
+        useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
       home: LandingPage(),

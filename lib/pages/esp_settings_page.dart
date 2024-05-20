@@ -33,12 +33,17 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
   String errorMessage = 'Verifique se o aplicativo possui a permissão necessária e tente novamente!';
   CanGetScannedResults? can;
   late User user;
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
     user = Provider.of<User>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      print('object');
+      _startListeningToScannedResults();
+    });
     _startListeningToScannedResults();
   }
 
@@ -63,7 +68,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
       case CanGetScannedResults.yes:
         subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
           setState(() {
-            wifiList = results;
+            wifiList = results.where((element) => element.ssid.isNotEmpty && element.frequency < 5000).toList();
+            timer?.cancel();
           });
         });
         break;
