@@ -1,5 +1,7 @@
 import 'package:amusevr_assist/api/firebase_api.dart';
+import 'package:amusevr_assist/pages/home_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
+import 'package:amusevr_assist/widgets/custom_drawer.dart';
 import 'package:amusevr_assist/widgets/password_field.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +28,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     final name = _nameController.text.trim();
 
     if (email.isEmpty && password.isEmpty) {
-      showCustomSnackBar(context, 'Por favor, digite o email e a senha!', 'error');
+      showCustomSnackBar(
+          context, 'Por favor, digite o email e a senha!', 'error');
       return;
     }
 
@@ -34,7 +37,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       showCustomSnackBar(context, 'O campo email está vazio!', 'error');
       return;
     } else if (!isEmailValid(email)) {
-      showCustomSnackBar(context, 'Email inválido. Por favor, insira um email válido.', 'error');
+      showCustomSnackBar(context,
+          'Email inválido. Por favor, insira um email válido.', 'error');
       return;
     }
 
@@ -43,7 +47,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       return;
     }
 
-    await FirebaseApi.createAccount(email, password, name, _wantToBeAuthor).then((value) {
+    await FirebaseApi.createAccount(email, password, name, _wantToBeAuthor)
+        .then((value) {
       if (value.statusCode == 200) {
         Navigator.of(context).pop();
         showCustomSnackBar(context, value.message, 'success');
@@ -130,6 +135,24 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             ),
           ),
         ),
+      ),
+      drawer: CustomDrawer(
+        isLogged: false,
+        actualPage: 'createAccountPage',
+        homeFunction: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
+        },
+        createAccountPageFunction: () {},
+        espPageFunction: () {},
+        logoutFunction: () {
+          logout(context);
+        },
+        moodoPageFunction: () {},
       ),
     );
   }

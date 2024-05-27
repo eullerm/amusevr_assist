@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      FirebaseApi.login(_emailController.text, _passwordController.text).then((response) {
+      FirebaseApi.login(_emailController.text.trim(), _passwordController.text).then((response) {
         if (response.statusCode == 200) {
           user.setIsAuthenticated(true);
           if (response.body!['deviceKey'] != null) {

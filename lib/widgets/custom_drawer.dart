@@ -5,6 +5,7 @@ class CustomDrawer extends StatelessWidget {
   final Function() homeFunction;
   final Function() espPageFunction;
   final Function() moodoPageFunction;
+  final Function() createAccountPageFunction;
 
   final bool isLogged;
   final String actualPage;
@@ -16,6 +17,7 @@ class CustomDrawer extends StatelessWidget {
     required this.espPageFunction,
     required this.isLogged,
     required this.actualPage,
+    required this.createAccountPageFunction,
   }) : super(key: key);
 
   @override
@@ -53,6 +55,16 @@ class CustomDrawer extends StatelessWidget {
             selectedIcon: Icons.home,
             function: homeFunction,
             isSelected: actualPage.toUpperCase() == 'HOMEPAGE',
+          ),
+          Visibility(
+            visible: !isLogged,
+            child: button(
+              text: 'Criar conta',
+              unselectedIcon: Icons.person_add_alt_1_outlined,
+              selectedIcon: Icons.person_add_alt_1,
+              function: createAccountPageFunction,
+              isSelected: actualPage.toUpperCase() == 'CREATEACCOUNT',
+            ),
           ),
           Visibility(
             visible: isLogged,

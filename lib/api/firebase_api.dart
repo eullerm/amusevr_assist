@@ -28,7 +28,7 @@ class FirebaseApi {
     if (name.isEmpty) {
       return Response(statusCode: 400, message: "Nome não pode ser vazio!");
     }
-
+    
     const codec = Utf8Codec();
     final key = codec.encode(password);
     final data = Uint8List.fromList(key);
@@ -50,6 +50,7 @@ class FirebaseApi {
           "tokenMoodo": null,
           "deviceKey": null,
           "espIpAddress": null,
+          "firstLogin": true,
         });
       }
       return Response(statusCode: 200, message: "Conta criada com sucesso!");

@@ -3,16 +3,15 @@ import 'dart:async';
 import 'package:amusevr_assist/api/esp_api.dart';
 import 'package:amusevr_assist/api/firebase_api.dart';
 import 'package:amusevr_assist/models/user.dart';
+import 'package:amusevr_assist/pages/home_page.dart';
 import 'package:amusevr_assist/pages/moodo_settings_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/access_point_tile.dart';
 import 'package:amusevr_assist/widgets/custom_drawer.dart';
-import 'package:amusevr_assist/widgets/page_indicator.dart';
 import 'package:amusevr_assist/widgets/password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wifi_scan/wifi_scan.dart';
-import 'package:android_flutter_wifi/android_flutter_wifi.dart';
 
 class EspSettingsPage extends StatefulWidget {
   const EspSettingsPage({
@@ -24,7 +23,7 @@ class EspSettingsPage extends StatefulWidget {
 }
 
 class _EspSettingsPageState extends State<EspSettingsPage>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+    with WidgetsBindingObserver {
   List<WiFiAccessPoint> wifiList = <WiFiAccessPoint>[];
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';
@@ -36,48 +35,33 @@ class _EspSettingsPageState extends State<EspSettingsPage>
       'Verifique se o aplicativo possui a permissão necessária e tente novamente!';
   CanGetScannedResults? can;
   late User user;
-  late PageController _pageViewController;
-  late TabController _tabController;
-  int _currentPageIndex = 0;
-  final List<String> itemsESP = [
-    "Conecte-se na rede WiFi do ESP pelas configurações do android;",
-    "Selecione a rede que você deseja que o ESP se conecte;",
-    "Pronto, o ESP está configurado!",
-  ];
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
     user = Provider.of<User>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
-    _pageViewController = PageController()
-      ..addListener(() {
-        if (_currentPageIndex == 1) {
-          _startListeningToScannedResults();
-          _initWifi();
-        }
-      });
-    _tabController = TabController(length: 2, vsync: this);
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      print('object');
+      _startListeningToScannedResults();
+    });
+    _startListeningToScannedResults();
   }
 
   @override
   dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
-    _pageViewController.dispose();
-    _tabController.dispose();
+
     subscription?.cancel();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _currentPageIndex == 1) {
+    if (state == AppLifecycleState.resumed) {
       _startListeningToScannedResults();
     }
-  }
-
-  void _initWifi() async {
-    await AndroidFlutterWifi.init();
   }
 
   void _startListeningToScannedResults() async {
@@ -91,6 +75,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
                 .where((element) =>
                     element.ssid.isNotEmpty && element.frequency < 5000)
                 .toList();
+            timer?.cancel();
           });
         });
         break;
@@ -264,13 +249,6 @@ class _EspSettingsPageState extends State<EspSettingsPage>
     );
   }
 
-  void _handlePageViewChanged(int currentPageIndex) {
-    _tabController.index = currentPageIndex;
-    setState(() {
-      _currentPageIndex = currentPageIndex;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     context.watch<User>();
@@ -281,22 +259,24 @@ class _EspSettingsPageState extends State<EspSettingsPage>
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            PageView(
-              controller: _pageViewController,
-              onPageChanged: _handlePageViewChanged,
-              children: [
-                pageInstructions(),
-                pageSettings(),
-              ],
-            ),
-            PageIndicator(
-              tabController: _tabController,
-              currentPageIndex: _currentPageIndex,
-            ),
-          ],
+        child: Builder(
+          builder: (BuildContext context) {
+            switch (step) {
+              case 0:
+                return listWifi();
+              case 1:
+                return confirmConnection();
+              case 2:
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              default:
+                setState(() {
+                  step = 0;
+                });
+                return listWifi();
+            }
+          },
         ),
       ),
       drawer: CustomDrawer(
@@ -316,51 +296,12 @@ class _EspSettingsPageState extends State<EspSettingsPage>
         moodoPageFunction: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MoodoSettingsPage()),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget pageInstructions() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: itemsESP.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: CircleAvatar(
-              child: Text((index + 1).toString()),
+            MaterialPageRoute(
+              builder: (context) => const MoodoSettingsPage(),
             ),
-            title: Text(itemsESP[index]),
           );
         },
       ),
-    );
-  }
-
-  Widget pageSettings() {
-    return Builder(
-      builder: (BuildContext context) {
-        switch (step) {
-          case 0:
-            return listWifi();
-          case 1:
-            return confirmConnection();
-          case 2:
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          default:
-            setState(() {
-              step = 0;
-            });
-            return listWifi();
-        }
-      },
     );
   }
 }

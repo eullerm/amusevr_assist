@@ -10,14 +10,24 @@ class User with ChangeNotifier {
   String? _espIpAddress;
   SharedPreferences? _prefs;
   bool _isAuthenticated = false;
+  bool? _firstLogin;
 
-  User({tokenMoodo, deviceKey, email, password, espIpAddress, isAuthenticated}) {
+  User({
+    tokenMoodo,
+    deviceKey,
+    email,
+    password,
+    espIpAddress,
+    isAuthenticated,
+    firstLogin,
+  }) {
     _tokenMoodo = tokenMoodo;
     _deviceKey = deviceKey;
     _email = email;
     _password = password;
     _espIpAddress = espIpAddress;
     _isAuthenticated = isAuthenticated;
+    _firstLogin = firstLogin;
     SharedPreferences.getInstance().then((value) => _prefs = value);
   }
 
@@ -27,6 +37,7 @@ class User with ChangeNotifier {
   String? get password => _password;
   String? get espIpAddress => _espIpAddress;
   bool get isAuthenticated => _isAuthenticated;
+  bool? get firstLogin => _firstLogin;
 
   void setIsAuthenticated(bool isAuthenticated) {
     _isAuthenticated = isAuthenticated;
@@ -82,6 +93,14 @@ class User with ChangeNotifier {
   void removeDeviceKey() {
     _deviceKey = null;
     _prefs!.remove('deviceKey');
+    notifyListeners();
+  }
+
+  void unlinkMoodoAccount() {
+    _deviceKey = null;
+    _tokenMoodo = null;
+    _prefs!.remove('deviceKey');
+    _prefs!.remove('tokenMoodo');
     notifyListeners();
   }
 }
