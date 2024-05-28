@@ -12,7 +12,8 @@ import 'package:amusevr_assist/widgets/password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wifi_scan/wifi_scan.dart';
-import 'package:android_flutter_wifi/android_flutter_wifi.dart';
+import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class EspSettingsPage extends StatefulWidget {
   const EspSettingsPage({
@@ -39,11 +40,39 @@ class _EspSettingsPageState extends State<EspSettingsPage>
   late PageController _pageViewController;
   late TabController _tabController;
   int _currentPageIndex = 0;
+  bool _isConnectedToEsp = false;
   final List<String> itemsESP = [
     "Conecte-se na rede WiFi do ESP pelas configurações do android;",
     "Selecione a rede que você deseja que o ESP se conecte;",
     "Pronto, o ESP está configurado!",
   ];
+  static const MethodChannel _channel = MethodChannel('wifi_settings');
+
+  Future<void> _openWifiSettings() async {
+    try {
+      await _channel.invokeMethod('openWifiSettings');
+    } on PlatformException catch (e) {
+      print("Failed to open Wi-Fi settings: '${e.message}'.");
+    }
+  }
+
+  Future<void> _getWifiSSID() async {
+    String wifiSSID;
+    try {
+      wifiSSID = await _channel.invokeMethod('getWifiSSID');
+    } on PlatformException catch (e) {
+      wifiSSID = "Failed to get Wi-Fi SSID: '${e.message}'.";
+    }
+    print(wifiSSID);
+    if (wifiSSID.contains('ESP')) {
+      setState(() {
+        _isConnectedToEsp = true;
+      });
+    } else {
+      print('open');
+      _openWifiSettings();
+    }
+  }
 
   @override
   void initState() {
@@ -54,7 +83,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
       ..addListener(() {
         if (_currentPageIndex == 1) {
           _startListeningToScannedResults();
-          _initWifi();
+          _getWifiSSID();
         }
       });
     _tabController = TabController(length: 2, vsync: this);
@@ -72,12 +101,9 @@ class _EspSettingsPageState extends State<EspSettingsPage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && _currentPageIndex == 1) {
+      _getWifiSSID();
       _startListeningToScannedResults();
     }
-  }
-
-  void _initWifi() async {
-    await AndroidFlutterWifi.init();
   }
 
   void _startListeningToScannedResults() async {
@@ -178,6 +204,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
 
   Widget listWifi() {
     ScrollController listViewController = ScrollController();
+
     return wifiList.isEmpty
         ? Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -324,21 +351,18 @@ class _EspSettingsPageState extends State<EspSettingsPage>
   }
 
   Widget pageInstructions() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: itemsESP.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: CircleAvatar(
-              child: Text((index + 1).toString()),
-            ),
-            title: Text(itemsESP[index]),
-          );
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: itemsESP.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: CircleAvatar(
+            child: Text((index + 1).toString()),
+          ),
+          title: Text(itemsESP[index]),
+        );
+      },
     );
   }
 
@@ -347,7 +371,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
       builder: (BuildContext context) {
         switch (step) {
           case 0:
-            return listWifi();
+            return _isConnectedToEsp ? listWifi() : connectToESP();
           case 1:
             return confirmConnection();
           case 2:
@@ -361,6 +385,23 @@ class _EspSettingsPageState extends State<EspSettingsPage>
             return listWifi();
         }
       },
+    );
+  }
+
+  Widget connectToESP() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: const Column(
+        children: [
+          Icon(Icons.warning_amber_rounded,
+              size: 100, color: Colors.orangeAccent),
+          Text(
+            "Você precisa se conectar na rede do ESP antes de continuar!",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 }
