@@ -18,8 +18,7 @@ class MoodoSettingsPage extends StatefulWidget {
   State<MoodoSettingsPage> createState() => _MoodoSettingsPageState();
 }
 
-class _MoodoSettingsPageState extends State<MoodoSettingsPage>
-    with TickerProviderStateMixin {
+class _MoodoSettingsPageState extends State<MoodoSettingsPage> with TickerProviderStateMixin {
   List<Device> devices = [];
   late User user;
   final TextEditingController _emailController = TextEditingController();
@@ -73,8 +72,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
 
   void linkMoodoAccount(BuildContext context) {
     try {
-      MoodoApi.login(_emailController.text.trim(), _passwordController.text)
-          .then((response) {
+      MoodoApi.login(_emailController.text.trim(), _passwordController.text).then((response) {
         if (response.statusCode == 200) {
           user.setTokenMoodo(response.token!);
           MoodoApi.fetchDevices(response.token!).then((value) {
@@ -83,8 +81,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
             });
           });
           FirebaseApi.settings(user.email!, {'tokenMoodo': response.token!});
-          showCustomSnackBar(
-              context, 'Conta vinculada com sucesso!', 'success');
+          showCustomSnackBar(context, 'Conta vinculada com sucesso!', 'success');
           setState(() {
             _showLoginDialog = false;
           });
@@ -218,49 +215,53 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
   }
 
   Widget _pageLogin() {
-    return AlertDialog(
-      title: const Text(
-        'Entre com sua conta Moodo que deseja vincular ao AmuseVR',
-        style: TextStyle(
-          fontSize: 18.0,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const SizedBox(height: 20.0),
-          TextFormField(
-            controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              border: OutlineInputBorder(),
+    return Builder(
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            'Entre com sua conta Moodo que deseja vincular ao AmuseVR',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 20.0),
-          PasswordField(
-            passwordController: _passwordController,
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const SizedBox(height: 20.0),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20.0),
+              PasswordField(
+                passwordController: _passwordController,
+              ),
+              const SizedBox(height: 20.0),
+            ],
           ),
-          const SizedBox(height: 20.0),
-        ],
-      ),
-      actionsAlignment: MainAxisAlignment.spaceBetween,
-      actions: [
-        OutlinedButton(
-          onPressed: () {
-            Navigator.popAndPushNamed(context, HomePage.routeName);
-          },
-          child: const Text('Cancelar'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            linkMoodoAccount(context);
-          },
-          child: const Text('Vincular'),
-        ),
-      ],
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: [
+            OutlinedButton(
+              onPressed: () {
+                Navigator.popAndPushNamed(context, HomePage.routeName);
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                linkMoodoAccount(context);
+              },
+              child: const Text('Vincular'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -272,9 +273,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
         return ListTile(
           key: Key(device.id.toString()),
           leading: const Icon(Icons.device_hub),
-          trailing: user.deviceKey == device.deviceKey
-              ? const Icon(Icons.check_circle, color: Colors.lightGreen)
-              : null,
+          trailing: user.deviceKey == device.deviceKey ? const Icon(Icons.check_circle, color: Colors.lightGreen) : null,
           title: Text(device.name),
           onTap: () {
             _handleItemClick(context, device);
