@@ -81,8 +81,11 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
     _pageViewController = PageController()
       ..addListener(() {
         if (_currentPageIndex == 1) {
-          _startListeningToScannedResults();
-          _getWifiSSID();
+          if (_isConnectedToEsp) {
+            _startListeningToScannedResults();
+          } else {
+            _getWifiSSID();
+          }
         }
       });
     _tabController = TabController(length: 2, vsync: this);
@@ -100,8 +103,11 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && _currentPageIndex == 1) {
-      _getWifiSSID();
-      _startListeningToScannedResults();
+      if (_isConnectedToEsp) {
+        _startListeningToScannedResults();
+      } else {
+        _getWifiSSID();
+      }
     }
   }
 
@@ -221,7 +227,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
             child: Column(
               children: [
                 const Text(
-                  "Lembre-se de se conectar na rede WiFi do ESP antes de selecionar a rede que ele se conectará!",
+                  "Habilite o GPS para podermos localizar as redes WiFi próximas a você!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
