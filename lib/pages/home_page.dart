@@ -108,16 +108,19 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: const Text('Logar'),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginPage(),
-            ),
-          );
-        },
+      floatingActionButton: Visibility(
+        visible: !user.isAuthenticated,
+        child: FloatingActionButton.extended(
+          label: const Text('Logar'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoginPage(),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
