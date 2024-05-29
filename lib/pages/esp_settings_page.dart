@@ -60,13 +60,11 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
     } on PlatformException catch (e) {
       wifiSSID = "Failed to get Wi-Fi SSID: '${e.message}'.";
     }
-    print(wifiSSID);
     if (wifiSSID.contains('ESP')) {
       setState(() {
         _isConnectedToEsp = true;
       });
     } else {
-      print('open');
       _openWifiSettings();
     }
   }
