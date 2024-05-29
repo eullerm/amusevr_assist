@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 import 'package:flutter/services.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 class EspSettingsPage extends StatefulWidget {
   const EspSettingsPage({
@@ -24,8 +23,7 @@ class EspSettingsPage extends StatefulWidget {
   State<EspSettingsPage> createState() => _EspSettingsPageState();
 }
 
-class _EspSettingsPageState extends State<EspSettingsPage>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingObserver, TickerProviderStateMixin {
   List<WiFiAccessPoint> wifiList = <WiFiAccessPoint>[];
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';
@@ -33,8 +31,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
   final TextEditingController _textControllerPassword = TextEditingController();
   bool isObscure = true;
   int step = 0;
-  String errorMessage =
-      'Verifique se o aplicativo possui a permissão necessária e tente novamente!';
+  String errorMessage = 'Verifique se o aplicativo possui a permissão necessária e tente novamente!';
   CanGetScannedResults? can;
   late User user;
   late PageController _pageViewController;
@@ -110,26 +107,20 @@ class _EspSettingsPageState extends State<EspSettingsPage>
     can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
     switch (can) {
       case CanGetScannedResults.yes:
-        subscription =
-            WiFiScan.instance.onScannedResultsAvailable.listen((results) {
+        subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
           setState(() {
-            wifiList = results
-                .where((element) =>
-                    element.ssid.isNotEmpty && element.frequency < 5000)
-                .toList();
+            wifiList = results.where((element) => element.ssid.isNotEmpty && element.frequency < 5000).toList();
           });
         });
         break;
       case CanGetScannedResults.notSupported:
         setState(() {
-          errorMessage =
-              "O aparelho não consegue listar os pontos de acesso WiFi!";
+          errorMessage = "O aparelho não consegue listar os pontos de acesso WiFi!";
         });
         break;
       case CanGetScannedResults.noLocationPermissionRequired:
         setState(() {
-          errorMessage =
-              "O aplicativo precisa de permissão para listar os pontos de acesso WiFi!";
+          errorMessage = "O aplicativo precisa de permissão para listar os pontos de acesso WiFi!";
         });
         break;
       case CanGetScannedResults.noLocationPermissionDenied:
@@ -176,8 +167,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
         if (response.statusCode == 200) {
           showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
           user.setEspIpAddress(response.body?['ip']);
-          FirebaseApi.settings(
-              user.email!, {'espIpAddress': response.body?['ip']});
+          FirebaseApi.settings(user.email!, {'espIpAddress': response.body?['ip']});
           setState(() {
             step = 0; // Volta para tela de escolher rede
           });
@@ -187,8 +177,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
             step = 0; // Volta para tela de escolher rede
           });
         } else {
-          showCustomSnackBar(
-              context, 'Falha ao se conectar! Tente novamente.', 'error');
+          showCustomSnackBar(context, 'Falha ao se conectar! Tente novamente.', 'error');
           setState(() {
             step = 1; // Volta para tela de digitar senha
           });
@@ -210,8 +199,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               children: [
-                const Icon(Icons.warning_amber_rounded,
-                    size: 100, color: Colors.orangeAccent),
+                const Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
                 const Text(
                   "Nenhuma rede encontada!",
                   textAlign: TextAlign.center,
@@ -393,8 +381,7 @@ class _EspSettingsPageState extends State<EspSettingsPage>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: const Column(
         children: [
-          Icon(Icons.warning_amber_rounded,
-              size: 100, color: Colors.orangeAccent),
+          Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
           Text(
             "Você precisa se conectar na rede do ESP antes de continuar!",
             textAlign: TextAlign.center,
