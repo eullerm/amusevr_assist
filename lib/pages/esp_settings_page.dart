@@ -38,6 +38,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
   late TabController _tabController;
   int _currentPageIndex = 0;
   bool _isConnectedToEsp = false;
+  bool _alreadyOpenedWifiSettings = false;
   final List<String> itemsESP = [
     "Conecte-se na rede WiFi do ESP pelas configurações do android;",
     "Selecione a rede que você deseja que o ESP se conecte;",
@@ -64,7 +65,10 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
       setState(() {
         _isConnectedToEsp = true;
       });
-    } else {
+    } else if (!_alreadyOpenedWifiSettings) {
+      setState(() {
+        _alreadyOpenedWifiSettings = true;
+      });
       _openWifiSettings();
     }
   }
