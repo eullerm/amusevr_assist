@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:amusevr_assist/api/esp_api.dart';
 import 'package:amusevr_assist/api/firebase_api.dart';
 import 'package:amusevr_assist/models/user.dart';
+import 'package:amusevr_assist/pages/home_page.dart';
 import 'package:amusevr_assist/pages/moodo_settings_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/access_point_tile.dart';
@@ -178,7 +179,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
           user.setEspIpAddress(response.body?['ip']);
           FirebaseApi.settings(user.email!, {'espIpAddress': response.body?['ip']});
           setState(() {
-            step = 0; // Volta para tela de escolher rede
+            step = 3; // Página de sucesso
           });
         } else if (response.statusCode == 404) {
           showCustomSnackBar(context, response.message, 'error');
@@ -213,6 +214,13 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
                   "Habilite o GPS para podermos localizar as redes WiFi próximas a você!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                const Text(
+                  'Caso seu GPS já esteja ligado, desligue e ligue novamente!',
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(
                   height: 8,
@@ -363,6 +371,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
             return const Center(
               child: CircularProgressIndicator(),
             );
+          case 3:
+            return sucessPage(context: context);
           default:
             setState(() {
               step = 0;
@@ -384,6 +394,35 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget sucessPage({required BuildContext context}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          const Icon(Icons.check_circle, size: 100, color: Colors.green),
+          const Text(
+            "Conectado com sucesso!",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                );
+              },
+              child: const Text("Voltar para a tela inicial"))
         ],
       ),
     );
