@@ -127,7 +127,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> with TickerProvid
             onPageChanged: _handlePageViewChanged,
             children: [
               _pageInstructions(),
-              _showLoginDialog ? _pageLogin() : _pageSettings(),
+              _showLoginDialog ? _pageLogin(context: context) : _pageSettings(),
             ],
           ),
           PageIndicator(
@@ -214,54 +214,50 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage> with TickerProvid
     );
   }
 
-  Widget _pageLogin() {
-    return Builder(
-      builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            'Entre com sua conta Moodo que deseja vincular ao AmuseVR',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+  Widget _pageLogin({required BuildContext context}) {
+    return AlertDialog(
+      title: const Text(
+        'Entre com sua conta Moodo que deseja vincular ao AmuseVR',
+        style: TextStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const SizedBox(height: 20.0),
+          TextFormField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(),
             ),
           ),
-          content: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const SizedBox(height: 20.0),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              PasswordField(
-                passwordController: _passwordController,
-              ),
-              const SizedBox(height: 20.0),
-            ],
+          const SizedBox(height: 20.0),
+          PasswordField(
+            passwordController: _passwordController,
           ),
-          actionsAlignment: MainAxisAlignment.spaceBetween,
-          actions: [
-            OutlinedButton(
-              onPressed: () {
-                Navigator.popAndPushNamed(context, HomePage.routeName);
-              },
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                linkMoodoAccount(context);
-              },
-              child: const Text('Vincular'),
-            ),
-          ],
-        );
-      },
+          const SizedBox(height: 20.0),
+        ],
+      ),
+      actionsAlignment: MainAxisAlignment.spaceBetween,
+      actions: [
+        OutlinedButton(
+          onPressed: () {
+            Navigator.popAndPushNamed(context, HomePage.routeName);
+          },
+          child: const Text('Cancelar'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            linkMoodoAccount(context);
+          },
+          child: const Text('Vincular'),
+        ),
+      ],
     );
   }
 
