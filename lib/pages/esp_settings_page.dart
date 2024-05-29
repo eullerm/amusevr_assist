@@ -52,6 +52,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
     } on PlatformException catch (e) {
       print("Failed to open Wi-Fi settings: '${e.message}'.");
     }
+    _getWifiSSID();
   }
 
   Future<void> _getWifiSSID() async {
@@ -117,7 +118,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
       case CanGetScannedResults.yes:
         subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
           setState(() {
-            wifiList = results.where((element) => element.ssid.isNotEmpty && element.frequency < 5000).toList();
+            wifiList = results.where((element) => element.ssid.isNotEmpty && element.frequency < 5000 && !element.ssid.contains("ESP")).toList();
           });
         });
         break;
@@ -209,7 +210,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
               children: [
                 const Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
                 const Text(
-                  "Nenhuma rede encontada!",
+                  "Habilite o GPS para podermos localizar as redes WiFi próximas a você!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
@@ -224,29 +225,17 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
             ),
           )
         : SingleChildScrollView(
-            child: Column(
-              children: [
-                const Text(
-                  "Habilite o GPS para podermos localizar as redes WiFi próximas a você!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: wifiList.length,
-                  controller: listViewController,
-                  itemBuilder: (context, index) {
-                    final network = wifiList[index];
-                    return AccessPointTile(
-                      onConfirm: () => {setWifi(network.ssid)},
-                      accessPoint: network,
-                    );
-                  },
-                ),
-              ],
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: wifiList.length,
+              controller: listViewController,
+              itemBuilder: (context, index) {
+                final network = wifiList[index];
+                return AccessPointTile(
+                  onConfirm: () => {setWifi(network.ssid)},
+                  accessPoint: network,
+                );
+              },
             ),
           );
   }
