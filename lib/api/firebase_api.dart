@@ -28,7 +28,7 @@ class FirebaseApi {
     if (name.isEmpty) {
       return Response(statusCode: 400, message: "Nome não pode ser vazio!");
     }
-    
+
     const codec = Utf8Codec();
     final key = codec.encode(password);
     final data = Uint8List.fromList(key);
@@ -47,9 +47,9 @@ class FirebaseApi {
           "password": hashedPassword,
           "name": name,
           "isAuthor": wantToBeAuthor,
-          "tokenMoodo": null,
-          "deviceKey": null,
-          "espIpAddress": null,
+          "tokenMoodo": '',
+          "deviceKey": 0,
+          "espIpAddress": '',
           "firstLogin": true,
         });
       }

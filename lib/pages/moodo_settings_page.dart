@@ -18,8 +18,7 @@ class MoodoSettingsPage extends StatefulWidget {
   State<MoodoSettingsPage> createState() => _MoodoSettingsPageState();
 }
 
-class _MoodoSettingsPageState extends State<MoodoSettingsPage>
-    with TickerProviderStateMixin {
+class _MoodoSettingsPageState extends State<MoodoSettingsPage> with TickerProviderStateMixin {
   List<Device> devices = [];
   late User user;
   final TextEditingController _emailController = TextEditingController();
@@ -73,9 +72,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
 
   void linkMoodoAccount(BuildContext context) async {
     try {
-      await MoodoApi.login(
-              _emailController.text.trim(), _passwordController.text)
-          .then((response) {
+      await MoodoApi.login(_emailController.text.trim(), _passwordController.text).then((response) {
         if (response.statusCode == 200) {
           user.setTokenMoodo(response.token!);
           MoodoApi.fetchDevices(response.token!).then((value) {
@@ -84,19 +81,16 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
             });
           });
           FirebaseApi.settings(user.email!, {'tokenMoodo': response.token!});
-          showCustomSnackBar(
-              context, 'Conta vinculada com sucesso!', 'success');
+          showCustomSnackBar(context, 'Conta vinculada com sucesso!', 'success');
           setState(() {
             _showLoginDialog = false;
           });
         } else {
-          showCustomSnackBar(context,
-              'Credenciais inválidas. Verifique seu e-mail e senha!', 'error');
+          showCustomSnackBar(context, 'Credenciais inválidas. Verifique seu e-mail e senha!', 'error');
         }
       });
     } catch (e) {
-      showCustomSnackBar(
-          context, 'Falha ao vincular. Verifique sua conexão!', 'error');
+      showCustomSnackBar(context, 'Falha ao vincular. Verifique sua conexão!', 'error');
     }
   }
 
@@ -106,7 +100,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
     setState(() {
       _showLoginDialog = true;
     });
-    FirebaseApi.settings(user.email!, {'deviceKey': null, 'tokenMoodo': null});
+    FirebaseApi.settings(user.email!, {'deviceKey': 0, 'tokenMoodo': ''});
   }
 
   @override
@@ -199,7 +193,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
   }
 
   void _handleItemUnselected(BuildContext context, String name) {
-    FirebaseApi.settings(user.email!, {'deviceKey': null});
+    FirebaseApi.settings(user.email!, {'deviceKey': 0});
     showCustomSnackBar(context, 'Você desvinculou o dispositivo $name', 'info');
     user.removeDeviceKey();
   }
@@ -275,9 +269,7 @@ class _MoodoSettingsPageState extends State<MoodoSettingsPage>
         return ListTile(
           key: Key(device.id.toString()),
           leading: const Icon(Icons.device_hub),
-          trailing: user.deviceKey == device.deviceKey
-              ? const Icon(Icons.check_circle, color: Colors.lightGreen)
-              : null,
+          trailing: user.deviceKey == device.deviceKey ? const Icon(Icons.check_circle, color: Colors.lightGreen) : null,
           title: Text(device.name),
           onTap: () {
             _handleItemClick(context, device);
