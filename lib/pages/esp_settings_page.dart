@@ -24,7 +24,8 @@ class EspSettingsPage extends StatefulWidget {
   State<EspSettingsPage> createState() => _EspSettingsPageState();
 }
 
-class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingObserver, TickerProviderStateMixin {
+class _EspSettingsPageState extends State<EspSettingsPage>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   List<WiFiAccessPoint> wifiList = <WiFiAccessPoint>[];
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   String ssid = '';
@@ -32,7 +33,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
   final TextEditingController _textControllerPassword = TextEditingController();
   bool isObscure = true;
   int step = 0;
-  String errorMessage = 'Verifique se o aplicativo possui a permissão necessária e tente novamente!';
+  String errorMessage =
+      'Verifique se o aplicativo possui a permissão necessária e tente novamente!';
   CanGetScannedResults? can;
   late User user;
   late PageController _pageViewController;
@@ -43,6 +45,7 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
   final List<String> itemsESP = [
     "Conecte-se na rede WiFi do ESP pelas configurações do android;",
     "Selecione a rede que você deseja que o ESP se conecte;",
+    "Ative o serviço de localização do seu aparelho(GPS);",
     "Pronto, o ESP está configurado!",
   ];
   static const MethodChannel _channel = MethodChannel('wifi_settings');
@@ -117,20 +120,28 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
     can = await WiFiScan.instance.canGetScannedResults(askPermissions: true);
     switch (can) {
       case CanGetScannedResults.yes:
-        subscription = WiFiScan.instance.onScannedResultsAvailable.listen((results) {
+        subscription =
+            WiFiScan.instance.onScannedResultsAvailable.listen((results) {
           setState(() {
-            wifiList = results.where((element) => element.ssid.isNotEmpty && element.frequency < 5000 && !element.ssid.contains("ESP")).toList();
+            wifiList = results
+                .where((element) =>
+                    element.ssid.isNotEmpty &&
+                    element.frequency < 5000 &&
+                    !element.ssid.contains("ESP"))
+                .toList();
           });
         });
         break;
       case CanGetScannedResults.notSupported:
         setState(() {
-          errorMessage = "O aparelho não consegue listar os pontos de acesso WiFi!";
+          errorMessage =
+              "O aparelho não consegue listar os pontos de acesso WiFi!";
         });
         break;
       case CanGetScannedResults.noLocationPermissionRequired:
         setState(() {
-          errorMessage = "O aplicativo precisa de permissão para listar os pontos de acesso WiFi!";
+          errorMessage =
+              "O aplicativo precisa de permissão para listar os pontos de acesso WiFi!";
         });
         break;
       case CanGetScannedResults.noLocationPermissionDenied:
@@ -177,7 +188,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
         if (response.statusCode == 200) {
           showCustomSnackBar(context, 'Conectado com sucesso!', 'success');
           user.setEspIpAddress(response.body?['ip']);
-          FirebaseApi.settings(user.email!, {'espIpAddress': response.body?['ip']});
+          FirebaseApi.settings(
+              user.email!, {'espIpAddress': response.body?['ip']});
           setState(() {
             step = 3; // Página de sucesso
           });
@@ -187,7 +199,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
             step = 0; // Volta para tela de escolher rede
           });
         } else {
-          showCustomSnackBar(context, 'Falha ao se conectar! Tente novamente.', 'error');
+          showCustomSnackBar(
+              context, 'Falha ao se conectar! Tente novamente.', 'error');
           setState(() {
             step = 1; // Volta para tela de digitar senha
           });
@@ -209,7 +222,8 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               children: [
-                const Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
+                const Icon(Icons.warning_amber_rounded,
+                    size: 100, color: Colors.orangeAccent),
                 const Text(
                   "Habilite o GPS para podermos localizar as redes WiFi próximas a você!",
                   textAlign: TextAlign.center,
@@ -388,9 +402,10 @@ class _EspSettingsPageState extends State<EspSettingsPage> with WidgetsBindingOb
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: const Column(
         children: [
-          Icon(Icons.warning_amber_rounded, size: 100, color: Colors.orangeAccent),
+          Icon(Icons.warning_amber_rounded,
+              size: 100, color: Colors.orangeAccent),
           Text(
-            "Você precisa se conectar na rede do ESP antes de continuar!",
+            "Você precisa se conectar na rede do ESP antes de continuar!\nApós se conectar, ligue o GPS do seu celular e volte para esta tela!",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
