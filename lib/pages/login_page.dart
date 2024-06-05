@@ -107,6 +107,9 @@ class _LoginPageState extends State<LoginPage> {
           if (response.body!['email'] != null) {
             user.setEmail(response.body!['email']);
           }
+          if (response.body!['name'] != null) {
+            user.setName(response.body!['name']);
+          }
           Navigator.pop(context);
         } else {
           showCustomSnackBar(context, response.message, 'error');

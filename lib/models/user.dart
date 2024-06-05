@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class User with ChangeNotifier {
   String? _tokenMoodo;
   int? _deviceKey;
+  String? _name;
   String? _email;
   String? _password;
   String? _espIpAddress;
@@ -15,6 +16,7 @@ class User with ChangeNotifier {
   User({
     tokenMoodo,
     deviceKey,
+    name,
     email,
     password,
     espIpAddress,
@@ -23,6 +25,7 @@ class User with ChangeNotifier {
   }) {
     _tokenMoodo = tokenMoodo;
     _deviceKey = deviceKey;
+    _name = name;
     _email = email;
     _password = password;
     _espIpAddress = espIpAddress;
@@ -33,6 +36,7 @@ class User with ChangeNotifier {
 
   String? get tokenMoodo => _tokenMoodo;
   int? get deviceKey => _deviceKey;
+  String? get name => _name;
   String? get email => _email;
   String? get password => _password;
   String? get espIpAddress => _espIpAddress;
@@ -54,6 +58,12 @@ class User with ChangeNotifier {
   void setDeviceKey(int deviceKey) {
     _deviceKey = deviceKey;
     _prefs!.setInt('deviceKey', deviceKey);
+    notifyListeners();
+  }
+
+  void setName(String name) {
+    _name = name;
+    _prefs!.setString('name', name);
     notifyListeners();
   }
 
@@ -82,6 +92,7 @@ class User with ChangeNotifier {
     _password = null;
     _espIpAddress = null;
     _prefs!.remove('tokenMoodo');
+    _prefs!.remove('name');
     _prefs!.remove('email');
     _prefs!.remove('password');
     _prefs!.remove('espIpAddress');

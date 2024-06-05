@@ -1,11 +1,14 @@
 import 'package:amusevr_assist/models/user.dart';
 import 'package:amusevr_assist/pages/create_account.dart';
+import 'package:amusevr_assist/pages/edit_account.dart';
 import 'package:amusevr_assist/pages/login_page.dart';
 import 'package:amusevr_assist/pages/moodo_settings_page.dart';
 import 'package:amusevr_assist/pages/esp_settings_page.dart';
 import 'package:amusevr_assist/utils/functions.dart';
 import 'package:amusevr_assist/widgets/custom_drawer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -40,36 +43,43 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("AmuseVR Assist"),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 16,
-            ),
-            const Text(
-              "Avisos:",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Visibility(
+                visible: user.isAuthenticated,
+                child: userInfo(),
               ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: warnings.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: const CircleAvatar(
-                    child: Text(('*')),
-                  ),
-                  title: Text(warnings[index]),
-                );
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-          ],
+              const SizedBox(
+                height: 16,
+              ),
+              const Text(
+                "Avisos:",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: warnings.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: const CircleAvatar(
+                      child: Text(('*')),
+                    ),
+                    title: Text(warnings[index]),
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+            ],
+          ),
         ),
       ),
       drawer: CustomDrawer(
@@ -122,6 +132,75 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
+    );
+  }
+
+  Widget userInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CircleAvatar(
+              radius: 16,
+              child: Icon(
+                Icons.person,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Bem-vindo!',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  user.name ?? 'Nome não informado',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              elevation: 2,
+              backgroundColor: Colors.white,
+              side: const BorderSide(color: Colors.black45, width: 1),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EditAccountPage(),
+                ),
+              );
+            },
+            child: const Text(
+              'Editar perfil',
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

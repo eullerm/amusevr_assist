@@ -60,6 +60,34 @@ class FirebaseApi {
     }
   }
 
+  static Future<Response> editAccount(String email, String password, String name) async {
+    try {
+      final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+      DocumentReference documentReference = usersCollection.doc(email);
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+
+      if (documentSnapshot.exists) {
+        if (password.isNotEmpty) {
+          const codec = Utf8Codec();
+
+          final key = codec.encode(password);
+          final data = Uint8List.fromList(key);
+          String hashedPassword = sha256.convert(data).toString();
+          await documentReference.update({"password": hashedPassword});
+        }
+        if (name.isNotEmpty) {
+          await documentReference.update({"name": name});
+        }
+      } else {
+        throw Exception("Usuário não encontrado");
+      }
+      return Response(statusCode: 200, message: "Conta atualizada com sucesso!");
+    } catch (e) {
+      print(e.toString());
+      return Response(statusCode: 400, message: e.toString());
+    }
+  }
+
   static Future<Response> login(String email, String password) async {
     if (email.isEmpty) {
       return Response(statusCode: 400, message: "Email não pode ser vazio!");
