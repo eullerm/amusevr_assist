@@ -50,13 +50,13 @@ class User with ChangeNotifier {
   }
 
   void setTokenMoodo(String token) {
-    _tokenMoodo = token;
+    _tokenMoodo = token.isEmpty ? null : token;
     _prefs!.setString('tokenMoodo', token);
     notifyListeners();
   }
 
   void setDeviceKey(int deviceKey) {
-    _deviceKey = deviceKey;
+    _deviceKey = deviceKey != 0 ? deviceKey : null;
     _prefs!.setInt('deviceKey', deviceKey);
     notifyListeners();
   }
